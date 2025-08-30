@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {getParts} from "@/service/PartsService";
+import {getParts} from "@/services/PartsService";
 import {PartType} from "../part/Part";
 import {setPartsList} from "@/store/slices/partsListSlice";
 import {useAppDispatch} from "@/store/hooks";
@@ -27,9 +27,5 @@ export const PartsListPage = () => {
         </div>
     )
 }
-
-
-
-
 
 export default PartsListPage;
