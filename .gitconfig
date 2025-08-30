@@ -1,0 +1,36 @@
+# This is Git's per-user configuration file.
+[user]
+# Please adapt and uncomment the following lines:
+	name = Michael Sanders
+	email = sanders.michael.j@gmail.com
+[alias]
+	gst = git
+	st = status
+	di = diff
+	ca = commit --amend
+	co = checkout
+	cob = checkout -b
+	cof = checkout --force
+	ci = commit
+	cm = commit -m
+	cp = cherry-pick
+	br = branch
+	brd = branch -D
+	sta = stash
+	llog = log --date=local
+	flog = log --pretty=fuller --decorate
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+	lol = log --graph --decorate --oneline
+	lola = log --graph --decorate --oneline --all
+	blog = log origin/master... --left-right
+	ds = diff --staged
+	fixup = commit --fixup
+	ms = merge --squash
+	p = push
+	pfn = push --force --no-verify
+	pu = push -u origin
+	rh = reset --hard
+	squash = commit --squash
+	amendit = commit --amend --no-edit
+	unstage = reset HEAD
+	rum = rebase master@{u}
