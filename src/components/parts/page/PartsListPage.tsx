@@ -11,9 +11,7 @@ export const PartsListPage = () => {
     useEffect(() => {
         const fetchParts = async () => {
             try {
-                console.log('Fetching parts...');
                 const data: PartType[] = await getParts();
-                console.log('Parts fetched:', data);
                 dispatch(setPartsList(data));
             } catch (err) {
                 console.error('Error fetching parts:', err);

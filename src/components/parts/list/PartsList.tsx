@@ -10,10 +10,12 @@ const PartsList: React.FC = () => {
     const parts = useAppSelector((state) => state.partsList.partsList);
     const dispatch = useAppDispatch();
 
-    const handleDelete = async (id: number) => {
-        const success = await deletePart(id);
-        if (success) {
-            dispatch(removePart(id))
+    const handleDelete = async (id: number, response: boolean) => {
+        if (response) {
+            const success = await deletePart(id);
+            if (success) {
+                dispatch(removePart(id))
+            }
         }
     }
 
@@ -38,7 +40,7 @@ const PartsList: React.FC = () => {
                                     <CurrencyTableCell value={part.bulkPrice}/>
                                     <TableCell>{part.bulkQuantity}</TableCell>
                                     <CurrencyTableCell value={part.bulkPrice / part.bulkQuantity}/>
-                                    <ActionsTableCell href={part.url} handleDelete={() => handleDelete(part.id)} />
+                                    <ActionsTableCell href={part.url} handleDelete={handleDelete} id={part.id} displayName={part.name} />
                                 </TableRow>
                             ))}
                         </TableBody>
