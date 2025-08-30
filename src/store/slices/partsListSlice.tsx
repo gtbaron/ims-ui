@@ -19,9 +19,12 @@ export const partsListSlice = createSlice({
         clearPartsList: (state) => {
             state.partsList = [];
         },
+        removePart: (state, action: PayloadAction<number>) => {
+            state.partsList = state.partsList.filter(part => part.id !== action.payload);
+        }
     },
 })
 
-export const { setPartsList, clearPartsList } = partsListSlice.actions;
+export const { setPartsList, clearPartsList, removePart } = partsListSlice.actions;
 
 export default partsListSlice.reducer;

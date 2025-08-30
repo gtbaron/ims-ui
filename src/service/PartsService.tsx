@@ -11,3 +11,8 @@ export const getParts = async (): Promise<PartType[]> => {
     const response = await api.get<ApiResponse<PartType[]>>('/parts');
     return response.data.data;
 }
+
+export const deletePart = async (id: number): Promise<boolean> => {
+    const response = await api.delete(`/parts/${id}`);
+    return response.data.success
+}

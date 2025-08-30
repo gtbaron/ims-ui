@@ -6,7 +6,6 @@ import {useAppDispatch} from "@/store/hooks";
 import PartsList from "@/components/parts/list/PartsList";
 
 export const PartsListPage = () => {
-    console.log('PartsListPage render');
     const dispatch = useAppDispatch();
 
     useEffect(() => {

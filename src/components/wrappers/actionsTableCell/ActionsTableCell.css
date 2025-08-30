@@ -1,0 +1,6 @@
+.actions-table-cell {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    font-size: 12pt;
+}
