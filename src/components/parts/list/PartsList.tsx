@@ -5,9 +5,11 @@ import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
 import {ActionsTableCell} from "@/components/wrappers/actionsTableCell/ActionsTableCell";
 import {callDeletePart} from "@/services/PartsService";
 import {removePart} from "@/store/slices/partsListSlice";
+import {IoAdd} from "react-icons/io5";
 
 export type PartsListProps = {
     handleEdit: (partId: number | undefined) => void;
+    handleAdd: () => void;
 };
 
 const PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
@@ -52,6 +54,11 @@ const PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                                 displayName={part.name} />
                         </TableRow>
                     ))}
+                    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                        <TableCell colSpan={6} className="cursor-pointer" onClick={() => props.handleAdd()}>
+                            <IoAdd title="Add part" className="float-right text-white text-2xl" />
+                        </TableCell>
+                    </TableRow>
                 </TableBody>
             </Table>
         </div>
