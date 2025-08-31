@@ -55,7 +55,7 @@ const PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                         </TableRow>
                     ))}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                        <TableCell colSpan={6} className="cursor-pointer" onClick={() => props.handleAdd()} title="Add part">
+                        <TableCell title="Add part" colSpan={6} className="cursor-pointer" onClick={() => props.handleAdd()}>
                             <IoAdd className="float-right text-white text-2xl" />
                         </TableCell>
                     </TableRow>
