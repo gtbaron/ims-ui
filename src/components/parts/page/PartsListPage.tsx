@@ -35,6 +35,11 @@ export const PartsListPage = () => {
         }
     }
 
+    const handleAdd = () => {
+        setModalPart({ name: '', provider: '', bulkPrice: 0, bulkQuantity: 0, url: ''});
+        setShowAddUpdatePartModal(true);
+    }
+
     const handleAddUpdatePart = async (submit: boolean, part: PartType) => {
         setShowAddUpdatePartModal(false);
         if (submit) {
@@ -50,7 +55,7 @@ export const PartsListPage = () => {
 
     return (
         <div>
-            <PartsList handleEdit={handleEdit} />
+            <PartsList handleEdit={handleEdit} handleAdd={handleAdd} />
             {showAddUpdatePartModal && <AddUpdatePartModal part={modalPart} showModal={showAddUpdatePartModal} handleResponse={handleAddUpdatePart} />}
         </div>
     )

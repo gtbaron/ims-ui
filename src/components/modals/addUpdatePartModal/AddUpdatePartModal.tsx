@@ -2,6 +2,7 @@ import {Button, Label, Modal, ModalBody, ModalHeader, TextInput} from "flowbite-
 import {useState} from "react";
 import {PartType} from "@/components/parts/part/Part";
 import './AddUpdatePartModal.css'
+import {usdFormatter} from "@/utils/FormatUtils";
 
 type AddUpdatePartModalProps = {
     part: PartType;
@@ -66,7 +67,7 @@ export const AddUpdatePartModal = (props: AddUpdatePartModalProps) => {
                             </div>
                             <TextInput
                                 id="bulkPrice"
-                                value={part.bulkPrice}
+                                value={usdFormatter.format(part.bulkPrice)}
                                 onChange={(event) => updatePartValue(event.target.value, 'bulkPrice')}
                                 required
                             />
