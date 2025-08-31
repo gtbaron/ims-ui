@@ -1,7 +1,7 @@
 import React from "react";
 
 export type PartType = {
-    id: number;
+    id?: number;
     name: string;
     provider: string;
     bulkPrice: number;

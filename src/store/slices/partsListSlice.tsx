@@ -16,8 +16,14 @@ export const partsListSlice = createSlice({
         setPartsList: (state, action: PayloadAction<PartType[]>) => {
             state.partsList = action.payload;
         },
-        clearPartsList: (state) => {
-            state.partsList = [];
+        addPart: (state, action: PayloadAction<PartType>) => {
+            state.partsList.push(action.payload);
+        },
+        updatePart: (state, action: PayloadAction<PartType>) => {
+            const index = state.partsList.findIndex(part => part.id === action.payload.id);
+            if (index !== -1) {
+                state.partsList[index] = action.payload;
+            }
         },
         removePart: (state, action: PayloadAction<number>) => {
             state.partsList = state.partsList.filter(part => part.id !== action.payload);
@@ -25,6 +31,6 @@ export const partsListSlice = createSlice({
     },
 })
 
-export const { setPartsList, clearPartsList, removePart } = partsListSlice.actions;
+export const { setPartsList, addPart, updatePart, removePart } = partsListSlice.actions;
 
 export default partsListSlice.reducer;

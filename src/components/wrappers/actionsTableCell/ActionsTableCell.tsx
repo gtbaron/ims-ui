@@ -1,13 +1,14 @@
 import {TableCell} from "flowbite-react";
 import React, {useState} from "react";
-import {IoOpenOutline, IoTrash} from "react-icons/io5";
+import {IoOpenOutline, IoPencil, IoTrash} from "react-icons/io5";
 import './ActionsTableCell.css'
 import {ConfirmDeleteModal} from "@/components/modals/ConfirmDeleteModal";
 
 type LinkTableCellProps = {
     href: string;
     handleDelete?: (id: number, response: boolean) => void;
-    id: number;
+    handleEdit?: (id: number | undefined) => void;
+    id: number | undefined;
     displayName: string;
     showDelete?: boolean;
 }
@@ -17,7 +18,7 @@ export const ActionsTableCell: React.FC<LinkTableCellProps> = (props: LinkTableC
 
     const handleDelete = (response: boolean) => {
         setShowDelete(false);
-        if (props.handleDelete) {
+        if (props.handleDelete && props.id) {
             props.handleDelete!(props.id, response);
         }
     }
@@ -27,13 +28,23 @@ export const ActionsTableCell: React.FC<LinkTableCellProps> = (props: LinkTableC
             <TableCell>
                 <div className={'actions-table-cell'}>
                     <a href={props.href} target="_blank" rel="noreferrer">
-                        <IoOpenOutline className="text-gray-400 hover:text-gray-100" />
+                        <IoOpenOutline className="text-gray-400 hover:text-gray-100" title="Open in new tab"/>
                     </a>
                     {
+                        props.handleEdit &&
+                               <IoPencil className="text-gray-400 hover:text-gray-100" title="Edit" onClick={() => props.handleEdit!(props.id)} />
+                    }
+                    {
                         props.handleDelete &&
-                        <>
-                            <IoTrash className="text-gray-400 hover:text-gray-100" onClick={() => setShowDelete(true)} />
-                        </>
+                            <IoTrash
+                                className="text-red-700 hover:text-red-400"
+                                onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowDelete(true);
+                                    }
+                                }
+                                title="Delete"
+                            />
                     }
                 </div>
             </TableCell>
