@@ -55,6 +55,7 @@ export const PartsListPage = () => {
 
     return (
         <div>
+            <h1 className='text-gray-500'>Master Parts List</h1>
             <PartsList handleEdit={handleEdit} handleAdd={handleAdd} />
             {showAddUpdatePartModal && <AddUpdatePartModal part={modalPart} showModal={showAddUpdatePartModal} handleResponse={handleAddUpdatePart} />}
         </div>

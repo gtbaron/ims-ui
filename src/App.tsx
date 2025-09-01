@@ -37,7 +37,7 @@ import PartsListPage from "./components/parts/page/PartsListPage";
 
 export default function App() {
     return (
-        <main className="min-h-screen flex items-center justify-center">
+        <main className="min-h-screen">
             <PartsListPage />
         </main>
     )

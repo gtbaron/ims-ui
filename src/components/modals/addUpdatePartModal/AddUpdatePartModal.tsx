@@ -1,8 +1,7 @@
 import {Button, Label, Modal, ModalBody, ModalHeader, TextInput} from "flowbite-react";
-import {useState} from "react";
+import {useRef, useState} from "react";
 import {PartType} from "@/components/parts/part/Part";
 import './AddUpdatePartModal.css'
-import {usdFormatter} from "@/utils/FormatUtils";
 
 type AddUpdatePartModalProps = {
     part: PartType;
@@ -12,6 +11,7 @@ type AddUpdatePartModalProps = {
 
 export const AddUpdatePartModal = (props: AddUpdatePartModalProps) => {
     const [part, setPart] = useState(props.part);
+    const nameInputRef = useRef<HTMLInputElement>(null);
 
     const handleCloseModal = (response: boolean) => {
         props.handleResponse(response, part);
@@ -22,7 +22,7 @@ export const AddUpdatePartModal = (props: AddUpdatePartModalProps) => {
     }
 
     return (
-        part && <Modal show={!!props.showModal} size="md" onClose={() => handleCloseModal(false)} popup>
+        part && <Modal show={!!props.showModal} size="md" onClose={() => handleCloseModal(false)} popup initialFocus={nameInputRef}>
             <ModalHeader />
             <ModalBody>
                 <div className="space-y-6">
@@ -36,6 +36,7 @@ export const AddUpdatePartModal = (props: AddUpdatePartModalProps) => {
                             value={part.name}
                             onChange={(event) => updatePartValue(event.target.value, 'name')}
                             required
+                            ref={nameInputRef}
                         />
                     </div>
                     <div>
@@ -67,7 +68,7 @@ export const AddUpdatePartModal = (props: AddUpdatePartModalProps) => {
                             </div>
                             <TextInput
                                 id="bulkPrice"
-                                value={usdFormatter.format(part.bulkPrice)}
+                                value={part.bulkPrice}
                                 onChange={(event) => updatePartValue(event.target.value, 'bulkPrice')}
                                 required
                             />
@@ -84,7 +85,8 @@ export const AddUpdatePartModal = (props: AddUpdatePartModalProps) => {
                             />
                         </div>
                     </div>
-                    <div className="w-full flex justify-end">
+                    <div className="w-full flex justify-between">
+                        <Button color="gray" onClick={() => handleCloseModal(false)}>Cancel</Button>
                         <Button onClick={() => handleCloseModal(true)}>{part.id ? 'Update' : 'Add'}</Button>
                     </div>
                 </div>

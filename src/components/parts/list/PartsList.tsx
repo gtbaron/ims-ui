@@ -10,9 +10,10 @@ import {IoAdd} from "react-icons/io5";
 export type PartsListProps = {
     handleEdit: (partId: number | undefined) => void;
     handleAdd: () => void;
+
 };
 
-const PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
+const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
     const parts = useAppSelector((state) => state.partsList.partsList);
     const dispatch = useAppDispatch();
 
