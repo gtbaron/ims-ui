@@ -1,12 +1,12 @@
 import {Button, Label, Modal, ModalBody, ModalHeader, TextInput} from "flowbite-react";
 import {useRef, useState} from "react";
-import {PartType} from "@/components/parts/part/Part";
+import {Part} from "@/components/parts/Part";
 import './AddUpdatePartModal.css'
 
 type AddUpdatePartModalProps = {
-    part: PartType;
+    part: Part;
     showModal?: boolean;
-    handleResponse: (response: boolean, part: PartType) => void;
+    handleResponse: (response: boolean, part: Part) => void;
 }
 
 export const AddUpdatePartModal = (props: AddUpdatePartModalProps) => {

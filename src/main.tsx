@@ -3,13 +3,15 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App'
 import { configureStore } from '@reduxjs/toolkit';
-import partsListReducer from "./store/slices/partsListSlice";
+import partsReducer from "./store/slices/PartsSlice";
+import itemsReducer from "./store/slices/ItemsSlice";
 import React from "react";
 import {Provider} from "react-redux";
 
 export const store = configureStore({
     reducer: {
-        partsList: partsListReducer,
+        parts: partsReducer,
+        items: itemsReducer,
     },
 });
 

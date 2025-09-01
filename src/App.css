@@ -49,3 +49,20 @@ h1 {
 body {
     background-color: black;
 }
+
+#main {
+    display: flex;
+    flex-direction: row;
+}
+
+#left {
+    width: 25%;
+}
+
+#right {
+    width: 85%;
+}
+
+nav {
+    text-align: left;
+}

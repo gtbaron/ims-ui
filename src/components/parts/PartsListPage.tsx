@@ -1,23 +1,31 @@
 import React, {useEffect, useState} from 'react';
 import {callCreatePart, callGetParts, callUpdatePart} from "@/services/PartsService";
-import {PartType} from "../part/Part";
+import {Part} from "./Part";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
-import PartsList from "@/components/parts/list/PartsList";
-import {addPart, setPartsList, updatePart} from "@/store/slices/partsListSlice";
+import PartsList from "@/components/parts/PartsList";
+import {addPart, setParts, updatePart} from "@/store/slices/PartsSlice";
 import {AddUpdatePartModal} from "@/components/modals/addUpdatePartModal/AddUpdatePartModal";
 import {Button} from "flowbite-react";
 
+const defaultPart: Part = {
+    name: '',
+    provider: '',
+    bulkPrice: 0,
+    bulkQuantity: 0,
+    url: ''
+};
+
 export const PartsListPage = () => {
-    const parts: PartType[] = useAppSelector((state) => state.partsList.partsList);
+    const parts: Part[] = useAppSelector((state) => state.parts.list);
     const [showAddUpdatePartModal, setShowAddUpdatePartModal] = useState(false);
-    const [modalPart, setModalPart] = useState<PartType>({ id: 0, name: '', provider: '', bulkPrice: 0, bulkQuantity: 0, url: ''});
+    const [modalPart, setModalPart] = useState<Part>(defaultPart);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         const fetchParts = async () => {
             try {
-                const data: PartType[] = await callGetParts();
-                dispatch(setPartsList(data));
+                const data: Part[] = await callGetParts();
+                dispatch(setParts(data));
             } catch (err) {
                 console.error('Error fetching parts:', err);
             }
@@ -37,11 +45,11 @@ export const PartsListPage = () => {
     }
 
     const handleAdd = () => {
-        setModalPart({ name: '', provider: '', bulkPrice: 0, bulkQuantity: 0, url: ''});
+        setModalPart(defaultPart);
         setShowAddUpdatePartModal(true);
     }
 
-    const handleAddUpdatePart = async (submit: boolean, part: PartType) => {
+    const handleAddUpdatePart = async (submit: boolean, part: Part) => {
         setShowAddUpdatePartModal(false);
         if (submit) {
             if (part.id) {

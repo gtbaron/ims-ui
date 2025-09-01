@@ -5,7 +5,7 @@ import './ActionsTableCell.css'
 import {ConfirmDeleteModal} from "@/components/modals/ConfirmDeleteModal";
 
 type LinkTableCellProps = {
-    href: string;
+    href?: string;
     handleDelete?: (id: number, response: boolean) => void;
     handleEdit?: (id: number | undefined) => void;
     id: number | undefined;
@@ -27,12 +27,15 @@ export const ActionsTableCell: React.FC<LinkTableCellProps> = (props: LinkTableC
         <>
             <TableCell>
                 <div className={'actions-table-cell'}>
-                    <a href={props.href} target="_blank" rel="noreferrer">
-                        <IoOpenOutline className="text-gray-400 hover:text-gray-100" title="Open in new tab"/>
-                    </a>
+                    {
+                        props.href &&
+                            <a href={props.href} target="_blank" rel="noreferrer">
+                                <IoOpenOutline className="text-gray-400 hover:text-gray-100" title="Open in new tab"/>
+                            </a>
+                    }
                     {
                         props.handleEdit &&
-                               <IoPencil className="text-gray-400 hover:text-gray-100" title="Edit" onClick={() => props.handleEdit!(props.id)} />
+                            <IoPencil className="text-gray-400 hover:text-gray-100" title="Edit" onClick={() => props.handleEdit!(props.id)} />
                     }
                     {
                         props.handleDelete &&

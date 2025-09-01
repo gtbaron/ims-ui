@@ -1,14 +1,9 @@
-import axios, {AxiosInstance} from "axios";
-import {PartType} from "@/components/parts/part/Part";
+import {Part} from "@/components/parts/Part";
 import {ApiResponse} from "./ApiResponse";
+import {api} from "@/services/ImsClient";
 
-const api: AxiosInstance = axios.create({
-    baseURL: 'http://localhost:8080',
-    headers: {'Content-Type': 'application/json'}
-})
-
-export const callGetParts = async (): Promise<PartType[]> => {
-    const response = await api.get<ApiResponse<PartType[]>>('/parts');
+export const callGetParts = async (): Promise<Part[]> => {
+    const response = await api.get<ApiResponse<Part[]>>('/parts');
     return response.data.data;
 }
 
@@ -17,12 +12,12 @@ export const callDeletePart = async (id: number): Promise<boolean> => {
     return response.data.success
 }
 
-export const callCreatePart = async (part: PartType): Promise<PartType> => {
+export const callCreatePart = async (part: Part): Promise<Part> => {
     const response = await api.post('/parts', part);
     return response.data.data[0];
 }
 
-export const callUpdatePart = async (part: PartType): Promise<PartType> => {
+export const callUpdatePart = async (part: Part): Promise<Part> => {
     const response = await api.patch(`/parts/${part.id}`, part);
     return response.data.data[0];
 }
