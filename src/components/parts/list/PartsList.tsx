@@ -9,8 +9,6 @@ import {IoAdd} from "react-icons/io5";
 
 export type PartsListProps = {
     handleEdit: (partId: number | undefined) => void;
-    handleAdd: () => void;
-
 };
 
 const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
@@ -56,9 +54,7 @@ const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                         </TableRow>
                     ))}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                        <TableCell title="Add part" colSpan={6} className="cursor-pointer" onClick={() => props.handleAdd()}>
-                            <IoAdd className="float-right text-white text-2xl" />
-                        </TableCell>
+                        <TableCell title="Add part" colSpan={6} ></TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

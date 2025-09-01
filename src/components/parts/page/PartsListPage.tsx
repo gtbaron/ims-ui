@@ -5,6 +5,7 @@ import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import PartsList from "@/components/parts/list/PartsList";
 import {addPart, setPartsList, updatePart} from "@/store/slices/partsListSlice";
 import {AddUpdatePartModal} from "@/components/modals/addUpdatePartModal/AddUpdatePartModal";
+import {Button} from "flowbite-react";
 
 export const PartsListPage = () => {
     const parts: PartType[] = useAppSelector((state) => state.partsList.partsList);
@@ -55,8 +56,11 @@ export const PartsListPage = () => {
 
     return (
         <div>
-            <h1 className='text-gray-500'>Master Parts List</h1>
-            <PartsList handleEdit={handleEdit} handleAdd={handleAdd} />
+            <div className="flex justify-between mb-3">
+                <h1 className='text-white'>Parts List</h1>
+                <Button color={'gray'} size={'sm'} onClick={() => handleAdd()}>Add Part</Button>
+            </div>
+            <PartsList handleEdit={handleEdit} />
             {showAddUpdatePartModal && <AddUpdatePartModal part={modalPart} showModal={showAddUpdatePartModal} handleResponse={handleAddUpdatePart} />}
         </div>
     )
