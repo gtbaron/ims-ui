@@ -67,7 +67,7 @@ export const ItemListPage: React.FC = () => {
     return (
         <div>
             <div className="flex justify-between mb-3">
-                <h1 className='text-white'>Items List</h1>
+                <h1 className='text-white'>Items</h1>
                 <Button color={'gray'} size={'sm'} onClick={() => handleAdd()}>Add Item</Button>
             </div>
             <ItemsList handleEdit={handleEdit} />

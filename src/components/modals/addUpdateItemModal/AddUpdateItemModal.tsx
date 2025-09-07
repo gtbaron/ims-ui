@@ -51,18 +51,7 @@ export const AddUpdateItemModal: React.FC<AddUpdateItemModalProps> = (props: Add
                             required
                         />
                     </div>
-                    {/*<div>*/}
-                    {/*    <div className="mb-2 block">*/}
-                    {/*        <Label htmlFor="url">URL</Label>*/}
-                    {/*    </div>*/}
-                    {/*    <TextInput*/}
-                    {/*        id="url"*/}
-                    {/*        value={part.url}*/}
-                    {/*        onChange={(event) => updatePartValue(event.target.value, 'url')}*/}
-                    {/*        required*/}
-                    {/*    />*/}
-                    {/*</div>*/}
-                    <div className={'side-by-side'}>
+                    <div className={'flex flex-row justify-between'}>
                         <div>
                             <div className="mb-2 block">
                                 <Label htmlFor="itemCategory">Category</Label>
@@ -83,17 +72,6 @@ export const AddUpdateItemModal: React.FC<AddUpdateItemModalProps> = (props: Add
                                 ))}
                             </Dropdown>
                         </div>
-                        {/*<div>*/}
-                        {/*    <div className="mb-2 block">*/}
-                        {/*        <Label htmlFor="bulkQuantity">Bulk Quantity</Label>*/}
-                        {/*    </div>*/}
-                        {/*    <TextInput*/}
-                        {/*        id="bulkQuantity"*/}
-                        {/*        value={part.bulkQuantity}*/}
-                        {/*        onChange={(event) => updatePartValue(event.target.value, 'bulkQuantity')}*/}
-                        {/*        required*/}
-                        {/*    />*/}
-                        {/*</div>*/}
                     </div>
                     <div className="w-full flex justify-between">
                         <Button color="gray" onClick={() => handleCloseModal(false)}>Cancel</Button>

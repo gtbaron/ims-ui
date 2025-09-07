@@ -1,7 +1,6 @@
 import {Button, Label, Modal, ModalBody, ModalHeader, TextInput} from "flowbite-react";
 import {useRef, useState} from "react";
 import {Part} from "@/components/parts/Part";
-import './AddUpdatePartModal.css'
 
 type AddUpdatePartModalProps = {
     part: Part;
@@ -61,7 +60,7 @@ export const AddUpdatePartModal = (props: AddUpdatePartModalProps) => {
                             required
                         />
                     </div>
-                    <div className={'side-by-side'}>
+                    <div className={'flex flex-row justify-between'}>
                         <div>
                             <div className="mb-2 block">
                                 <Label htmlFor="bulkPrice">Bulk Price</Label>

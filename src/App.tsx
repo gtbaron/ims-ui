@@ -16,10 +16,10 @@ export default function App() {
                             <SidebarItems>
                                 <SidebarItemGroup>
                                     <SidebarItem href="/items" icon={HiShoppingBag}>
-                                        Items List
+                                        Items
                                     </SidebarItem>
                                     <SidebarItem href="/parts" icon={HiWrench}>
-                                        Parts List
+                                        Parts
                                     </SidebarItem>
                                     {/*<SidebarItem href="#" icon={HiViewBoards} label="Pro" labelColor="dark">*/}
                                     {/*    Kanban*/}

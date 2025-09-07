@@ -65,7 +65,7 @@ export const PartsListPage = () => {
     return (
         <div>
             <div className="flex justify-between mb-3">
-                <h1 className='text-white'>Parts List</h1>
+                <h1 className='text-white'>Parts</h1>
                 <Button color={'gray'} size={'sm'} onClick={() => handleAdd()}>Add Part</Button>
             </div>
             <PartsList handleEdit={handleEdit} />
