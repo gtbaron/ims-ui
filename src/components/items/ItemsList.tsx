@@ -10,6 +10,7 @@ import {IoListOutline} from "react-icons/io5";
 
 export type ItemsListProps = {
     handleEdit: (partId: number | undefined) => void;
+    handleShowPartsList: (partId: number) => Promise<void>;
 }
 
 export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
@@ -45,7 +46,14 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                             <CurrencyTableCell value={item.listPrice}/>
                             <TableCell>{item.itemCategory}</TableCell>
                             <TableCell>{item.itemStatus}</TableCell>
-                            <TableCell className={'flex flex-row justify-around text-xl'}><IoListOutline className="text-gray-400 hover:text-gray-100" title="Update Parts List" /></TableCell>
+                            <TableCell className={'flex flex-row justify-around text-xl'}>
+                                <IoListOutline className="text-gray-400 hover:text-gray-100"
+                                    title="Update Parts List"
+                                    onClick={() => {
+                                        if (item.id) props.handleShowPartsList(item.id)
+                                    }}
+                                />
+                            </TableCell>
                             <ActionsTableCell
                                 handleDelete={handleDelete}
                                 handleEdit={props.handleEdit}

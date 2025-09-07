@@ -22,3 +22,8 @@ export const callUpdateItem = async (item: Item): Promise<Item> => {
     const response = await api.patch(`/items/${item.id}`, item);
     return response.data.data[0];
 }
+
+export const callGetItemParts = async (itemId: number): Promise<Part[]> => {
+    const response = await api.get(`/items/${itemId}/parts`);
+    return response.data.data[0];
+}
