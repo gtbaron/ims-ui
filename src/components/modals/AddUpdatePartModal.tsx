@@ -1,5 +1,5 @@
 import {Button, Label, Modal, ModalBody, ModalHeader, TextInput} from "flowbite-react";
-import {useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {Part} from "@/components/parts/Part";
 
 type AddUpdatePartModalProps = {
@@ -8,7 +8,7 @@ type AddUpdatePartModalProps = {
     handleResponse: (response: boolean, part: Part) => void;
 }
 
-export const AddUpdatePartModal = (props: AddUpdatePartModalProps) => {
+export const AddUpdatePartModal: React.FC<AddUpdatePartModalProps> = (props: AddUpdatePartModalProps) => {
     const [part, setPart] = useState(props.part);
     const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -22,10 +22,11 @@ export const AddUpdatePartModal = (props: AddUpdatePartModalProps) => {
 
     return (
         part && <Modal show={!!props.showModal} size="md" onClose={() => handleCloseModal(false)} popup initialFocus={nameInputRef}>
-            <ModalHeader />
+            <ModalHeader>
+                {part.id ? 'Update' : 'Add'} part
+            </ModalHeader>
             <ModalBody>
                 <div className="space-y-6">
-                    <h3 className="text-xl font-medium text-gray-900 dark:text-white">{part.id ? 'Update' : 'Add'} part</h3>
                     <div>
                         <div className="mb-2 block">
                             <Label htmlFor="name">Name</Label>

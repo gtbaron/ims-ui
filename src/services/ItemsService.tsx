@@ -1,7 +1,7 @@
 import {Item} from "@/components/items/Item";
 import {ApiResponse} from "@/services/ApiResponse";
 import {api} from "@/services/ImsClient";
-import {Part} from "@/components/parts/Part";
+import {ItemPart} from "@/components/items/ItemPart";
 
 export const callGetItems = async (): Promise<Item[]> => {
     const response = await api.get<ApiResponse<Item[]>>('/items');
@@ -23,7 +23,7 @@ export const callUpdateItem = async (item: Item): Promise<Item> => {
     return response.data.data[0];
 }
 
-export const callGetItemParts = async (itemId: number): Promise<Part[]> => {
+export const callGetItemParts = async (itemId: number): Promise<ItemPart[]> => {
     const response = await api.get(`/items/${itemId}/parts`);
     return response.data.data[0];
 }

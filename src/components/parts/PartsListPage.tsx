@@ -4,7 +4,7 @@ import {Part} from "./Part";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import PartsList from "@/components/parts/PartsList";
 import {addPart, setParts, updatePart} from "@/store/slices/PartsSlice";
-import {AddUpdatePartModal} from "@/components/modals/addUpdatePartModal/AddUpdatePartModal";
+import {AddUpdatePartModal} from "@/components/modals/AddUpdatePartModal";
 import {Button} from "flowbite-react";
 
 const defaultPart: Part = {

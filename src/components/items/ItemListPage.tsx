@@ -5,10 +5,11 @@ import {callCreateItem, callGetItemParts, callGetItems, callUpdateItem} from "@/
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {Item} from "@/components/items/Item";
 import {addItem, setItemsList, updateItem} from "@/store/slices/ItemsSlice";
-import {AddUpdateItemModal} from "@/components/modals/addUpdateItemModal/AddUpdateItemModal";
+import {AddUpdateItemModal} from "@/components/modals/AddUpdateItemModal";
 import {ItemCategory} from "@/components/items/ItemCategory";
 import {ItemStatus} from "@/components/items/ItemStatus";
-import {Part} from "@/components/parts/Part";
+import {ItemPart} from "@/components/items/ItemPart";
+import {AddUpdateItemPartsListModal} from "@/components/modals/AddUpdateItemPartsListModal";
 
 const defaultItem: Item = {
     name: '',
@@ -19,8 +20,13 @@ const defaultItem: Item = {
 
 export const ItemListPage: React.FC = () => {
     const items: Item[] = useAppSelector((state) => state.items.list);
+    const [showPartsListModal, setShowPartsListModal] = useState(false);
     const [showAddUpdateItemModal, setShowAddUpdateItemModal] = useState(false);
     const [modalItem, setModalItem] = useState<Item>(defaultItem);
+    const [partsListItemId, setPartsListItemId] = useState<number>(0);
+    const [itemPartsList, setItemPartsList] = useState<ItemPart[]>([]);
+    const [displayName, setDisplayName] = useState('');
+
     const dispatch = useAppDispatch();
 
 
@@ -66,9 +72,22 @@ export const ItemListPage: React.FC = () => {
     }
 
     const handleShowPartsList = async (itemId: number) => {
-        let itemParts: Part[] = await callGetItemParts(itemId);
+        const clickedItem = items.find(item => item.id === itemId);
+        if (!clickedItem) return;
+
+        let itemParts: ItemPart[] = await callGetItemParts(itemId);
         itemParts = itemParts ? itemParts : [];
-        console.log(itemParts);
+        setItemPartsList(itemParts);
+        setPartsListItemId(itemId);
+        setShowPartsListModal(true);
+        setDisplayName(clickedItem.name);
+    }
+
+    const handleAddUpdatePartsList = (response: boolean, itemId: number, itemParts: ItemPart[]) => {
+        console.log('handleAddUpdatePartsList', response, itemId, itemParts);
+        setShowPartsListModal(false);
+        if (!response) return;
+
     }
 
     return (
@@ -79,6 +98,7 @@ export const ItemListPage: React.FC = () => {
             </div>
             <ItemsList handleEdit={handleEdit} handleShowPartsList={handleShowPartsList} />
             {showAddUpdateItemModal && <AddUpdateItemModal item={modalItem} showModal={showAddUpdateItemModal} handleResponse={handleAddUpdateItem} />}
+            {showPartsListModal && <AddUpdateItemPartsListModal showModal={showPartsListModal} itemId={partsListItemId} displayName={displayName} itemParts={itemPartsList} handleResponse={handleAddUpdatePartsList} />}
         </div>
     )
 }

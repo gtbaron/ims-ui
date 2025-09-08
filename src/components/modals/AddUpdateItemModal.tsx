@@ -1,5 +1,5 @@
 import {Item} from "@/components/items/Item";
-import {useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {Button, Dropdown, DropdownItem, Label, Modal, ModalBody, ModalHeader, TextInput} from "flowbite-react";
 import {ItemCategory} from "@/components/items/ItemCategory";
 import {ItemStatus} from "@/components/items/ItemStatus";
@@ -24,10 +24,11 @@ export const AddUpdateItemModal: React.FC<AddUpdateItemModalProps> = (props: Add
 
     return (
         item && <Modal show={!!props.showModal} size="md" onClose={() => handleCloseModal(false)} popup initialFocus={nameInputRef}>
-            <ModalHeader />
+            <ModalHeader>
+                {item.id ? 'Update' : 'Add'} item
+            </ModalHeader>
             <ModalBody>
                 <div className="space-y-6">
-                    <h3 className="text-xl font-medium text-gray-900 dark:text-white">{item.id ? 'Update' : 'Add'} item</h3>
                     <div>
                         <div className="mb-2 block">
                             <Label htmlFor="name">Name</Label>
