@@ -1,15 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {ItemsList} from "@/components/items/ItemsList";
 import {Button} from "flowbite-react";
-import {callCreateItem, callGetItemParts, callGetItems, callUpdateItem} from "@/services/ItemsService";
+import {callGetItems} from "@/services/ItemsService";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {Item} from "@/components/items/Item";
-import {addItem, setItemsList, updateItem} from "@/store/slices/ItemsSlice";
-import {AddUpdateItemModal} from "@/components/modals/AddUpdateItemModal";
+import {setItemsList, setSelectedItem} from "@/store/slices/ItemsSlice";
 import {ItemCategory} from "@/components/items/ItemCategory";
 import {ItemStatus} from "@/components/items/ItemStatus";
-import {ItemPart} from "@/components/items/ItemPart";
-import {AddUpdateItemPartsListModal} from "@/components/modals/AddUpdateItemPartsListModal";
+import {useNavigate} from "react-router-dom";
 
 const defaultItem: Item = {
     name: '',
@@ -20,15 +18,8 @@ const defaultItem: Item = {
 
 export const ItemListPage: React.FC = () => {
     const items: Item[] = useAppSelector((state) => state.items.list);
-    const [showPartsListModal, setShowPartsListModal] = useState(false);
-    const [showAddUpdateItemModal, setShowAddUpdateItemModal] = useState(false);
-    const [modalItem, setModalItem] = useState<Item>(defaultItem);
-    const [partsListItemId, setPartsListItemId] = useState<number>(0);
-    const [itemPartsList, setItemPartsList] = useState<ItemPart[]>([]);
-    const [displayName, setDisplayName] = useState('');
-
     const dispatch = useAppDispatch();
-
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchItems = async () => {
@@ -48,57 +39,23 @@ export const ItemListPage: React.FC = () => {
 
         const clickedItem = items.find(item => item.id === itemId);
         if (clickedItem) {
-            setModalItem(clickedItem);
-            setShowAddUpdateItemModal(true);
+            dispatch(setSelectedItem(clickedItem));
+            navigate('/item-details');
         }
     }
 
     const handleAdd = () => {
-        setModalItem(defaultItem);
-        setShowAddUpdateItemModal(true);
-    }
-
-    const handleAddUpdateItem = async (submit: boolean, item: Item) => {
-        setShowAddUpdateItemModal(false);
-        if (submit) {
-            if (item.id) {
-                const updatedItem = await callUpdateItem(item);
-                dispatch(updateItem(updatedItem));
-            } else {
-                const createdItem = await callCreateItem(item);
-                dispatch(addItem(createdItem));
-            }
-        }
-    }
-
-    const handleShowPartsList = async (itemId: number) => {
-        const clickedItem = items.find(item => item.id === itemId);
-        if (!clickedItem) return;
-
-        let itemParts: ItemPart[] = await callGetItemParts(itemId);
-        itemParts = itemParts ? itemParts : [];
-        setItemPartsList(itemParts);
-        setPartsListItemId(itemId);
-        setShowPartsListModal(true);
-        setDisplayName(clickedItem.name);
-    }
-
-    const handleAddUpdatePartsList = (response: boolean, itemId: number, itemParts: ItemPart[]) => {
-        console.log('handleAddUpdatePartsList', response, itemId, itemParts);
-        setShowPartsListModal(false);
-        if (!response) return;
-
+        dispatch(setSelectedItem(defaultItem));
+        navigate('/item-details');
     }
 
     return (
         <div>
             <div className="flex justify-between mb-3">
                 <h1 className='text-white'>Items</h1>
-                <Button color={'gray'} size={'sm'} onClick={() => handleAdd()}>Add Item</Button>
+                <Button color={'gray'} size={'sm'} onClick={handleAdd}>Add Item</Button>
             </div>
-            <ItemsList handleEdit={handleEdit} handleShowPartsList={handleShowPartsList} />
-            {showAddUpdateItemModal && <AddUpdateItemModal item={modalItem} showModal={showAddUpdateItemModal} handleResponse={handleAddUpdateItem} />}
-            {showPartsListModal && <AddUpdateItemPartsListModal showModal={showPartsListModal} itemId={partsListItemId} displayName={displayName} itemParts={itemPartsList} handleResponse={handleAddUpdatePartsList} />}
+            <ItemsList handleEdit={handleEdit} />
         </div>
     )
 }

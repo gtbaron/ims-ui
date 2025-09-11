@@ -87,7 +87,7 @@ export const AddUpdatePartModal: React.FC<AddUpdatePartModalProps> = (props: Add
                     </div>
                     <div className="w-full flex justify-between">
                         <Button color="gray" onClick={() => handleCloseModal(false)}>Cancel</Button>
-                        <Button onClick={() => handleCloseModal(true)}>{part.id ? 'Update' : 'Add'}</Button>
+                        <Button color={'green'}  onClick={() => handleCloseModal(true)}>{part.id ? 'Update' : 'Add'}</Button>
                     </div>
                 </div>
             </ModalBody>

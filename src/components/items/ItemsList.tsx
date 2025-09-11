@@ -6,11 +6,9 @@ import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
 import {ActionsTableCell} from "@/components/wrappers/actionsTableCell/ActionsTableCell";
 import {removeItem} from "@/store/slices/ItemsSlice";
 import {callDeleteItem} from "@/services/ItemsService";
-import {IoListOutline} from "react-icons/io5";
 
 export type ItemsListProps = {
     handleEdit: (partId: number | undefined) => void;
-    handleShowPartsList: (partId: number) => Promise<void>;
 }
 
 export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
@@ -35,7 +33,6 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                         <TableHeadCell>List Price</TableHeadCell>
                         <TableHeadCell>Category</TableHeadCell>
                         <TableHeadCell>Status</TableHeadCell>
-                        <TableHeadCell>Parts List</TableHeadCell>
                         <TableHeadCell>Actions</TableHeadCell>
                     </TableRow>
                 </TableHead>
@@ -46,14 +43,6 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                             <CurrencyTableCell value={item.listPrice}/>
                             <TableCell>{item.itemCategory}</TableCell>
                             <TableCell>{item.itemStatus}</TableCell>
-                            <TableCell className={'flex flex-row justify-around text-xl'}>
-                                <IoListOutline className="text-gray-400 hover:text-gray-100"
-                                    title="Update Parts List"
-                                    onClick={() => {
-                                        if (item.id) props.handleShowPartsList(item.id)
-                                    }}
-                                />
-                            </TableCell>
                             <ActionsTableCell
                                 handleDelete={handleDelete}
                                 handleEdit={props.handleEdit}
@@ -63,7 +52,7 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                         </TableRow>
                     ))}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                        <TableCell colSpan={6} ></TableCell>
+                        <TableCell colSpan={5} ></TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

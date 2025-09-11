@@ -5,6 +5,7 @@ import {Sidebar, SidebarItem, SidebarItemGroup, SidebarItems} from "flowbite-rea
 import {HiShoppingBag} from "react-icons/hi";
 import {HiWrench} from "react-icons/hi2";
 import {ItemListPage} from "@/components/items/ItemListPage";
+import {ItemDetailsPage} from "@/components/items/details/ItemDetailsPage";
 
 export default function App() {
     return (
@@ -21,21 +22,6 @@ export default function App() {
                                     <SidebarItem href="/parts" icon={HiWrench}>
                                         Parts
                                     </SidebarItem>
-                                    {/*<SidebarItem href="#" icon={HiViewBoards} label="Pro" labelColor="dark">*/}
-                                    {/*    Kanban*/}
-                                    {/*</SidebarItem>*/}
-                                    {/*<SidebarItem href="#" icon={HiInbox} label="3">*/}
-                                    {/*    Inbox*/}
-                                    {/*</SidebarItem>*/}
-                                    {/*<SidebarItem href="#" icon={HiUser}>*/}
-                                    {/*    Users*/}
-                                    {/*</SidebarItem>*/}
-                                    {/*<SidebarItem href="#" icon={HiArrowSmRight}>*/}
-                                    {/*    Sign In*/}
-                                    {/*</SidebarItem>*/}
-                                    {/*<SidebarItem href="#" icon={HiTable}>*/}
-                                    {/*    Sign Up*/}
-                                    {/*</SidebarItem>*/}
                                 </SidebarItemGroup>
                             </SidebarItems>
                         </Sidebar>
@@ -44,6 +30,7 @@ export default function App() {
                         <Routes>
                             <Route path="/parts" element={<PartsListPage />} />
                             <Route path="/items" element={<ItemListPage />} />
+                            <Route path="/item-details" element={<ItemDetailsPage />} />
                         </Routes>
                     </div>
                 </div>
