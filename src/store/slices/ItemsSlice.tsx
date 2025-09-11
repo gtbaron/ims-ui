@@ -1,12 +1,23 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Item} from "@/components/items/Item";
+import {ItemCategory} from "@/components/items/ItemCategory";
+import {ItemStatus} from "@/components/items/ItemStatus";
+
+const defaultItem: Item = {
+    name: '',
+    listPrice: 0,
+    itemCategory: ItemCategory.HOME_DECOR,
+    itemStatus: ItemStatus.DRAFT
+};
 
 type ItemsState = {
     list: Item[];
+    selectedItem: Item;
 }
 
 const initialState: ItemsState = {
-    list: []
+    list: [],
+    selectedItem: defaultItem
 };
 
 export const itemsSlice = createSlice({
@@ -27,10 +38,16 @@ export const itemsSlice = createSlice({
         },
         removeItem: (state, action: PayloadAction<number>) => {
             state.list = state.list.filter(item => item.id !== action.payload);
+        },
+        setSelectedItem: (state, action: PayloadAction<Item>) => {
+            state.selectedItem = action.payload;
+        },
+        clearSelectedItem: (state) => {
+            state.selectedItem = defaultItem;
         }
     },
 })
 
-export const { setItemsList, addItem, updateItem, removeItem } = itemsSlice.actions;
+export const { setItemsList, addItem, updateItem, removeItem, setSelectedItem, clearSelectedItem } = itemsSlice.actions;
 
 export default itemsSlice.reducer;
