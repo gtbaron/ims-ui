@@ -13,7 +13,7 @@ export default function App() {
             <Router>
                 <div id={'main'}>
                     <div id={'left'}>
-                        <Sidebar aria-label="Default sidebar example">
+                        <Sidebar>
                             <SidebarItems>
                                 <SidebarItemGroup>
                                     <SidebarItem href="/items" icon={HiShoppingBag}>

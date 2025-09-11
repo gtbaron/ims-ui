@@ -32,12 +32,15 @@ export const ItemDetailsPage: React.FC = () => {
             const createdItem = await callCreateItem(item);
             dispatch(addItem(createdItem));
         }
+        navigate('/items');
     }
 
     return (
         <div>
-            <h1 className='text-white'>{item.id ? item.name : 'Add Item'}</h1>
-            <div className="bg-gray-900 rounded-xl space-y-6 text-left w-1/2 p-6">
+            <div className="flex justify-between mb-3">
+                <h1 className='text-white'>{item.id ? item.name : 'Add Item'}</h1>
+            </div>
+            <div className="bg-gray-800 rounded-xl space-y-6 text-left w-1/2 p-6">
                 <div>
                     <div className="mb-1 block">
                         <Label htmlFor="name">Name</Label>
