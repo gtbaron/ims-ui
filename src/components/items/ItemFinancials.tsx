@@ -34,7 +34,7 @@ export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinanci
     }, [props.item, setCostOfParts, suggestedListPrice, setSuggestedListPrice, setAskPrice, discount]);
 
     return (
-        <div className='w-full flex flex-col flex-1 m-3 bg-gray-800 rounded-xl space-y-6 p-6'>
+        <div className='w-full flex flex-col flex-1 m-2 bg-gray-800 rounded-xl space-y-6 p-6'>
             <div className="text-white text-left mb-3">
                 <h2>Financial Data</h2>
             </div>

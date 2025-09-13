@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef} from "react";
 import {Item} from "@/components/items/Item";
 import {Dropdown, DropdownItem, Label, TextInput} from "flowbite-react";
 import {ItemCategory} from "@/components/items/ItemCategory";
@@ -18,7 +18,7 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
 
     const {item, handleItemValueChanged} = props;
     return (
-        <div className={'text-left w-1/2 m-3 bg-gray-800 rounded-xl space-y-6 p-6'}>
+        <div className={'text-left w-1/2 m-2 bg-gray-800 rounded-xl space-y-6 p-6'}>
             <div className="text-white text-left mb-3">
                 <h2>Item Description</h2>
             </div>
@@ -29,7 +29,7 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
                 <TextInput
                     id="name"
                     value={item.name}
-                    onChange={(event) => props.handleItemValueChanged(event.target.value, 'name')}
+                    onChange={(event) => handleItemValueChanged(event.target.value, 'name')}
                     required
                     ref={nameInputRef}
                     sizing={'sm'}
@@ -43,7 +43,7 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
                     <TextInput
                         id="listPrice"
                         value={item.listPrice}
-                        onChange={(event) => props.handleItemValueChanged(event.target.value, 'listPrice')}
+                        onChange={(event) => handleItemValueChanged(event.target.value, 'listPrice')}
                         required
                         sizing={'sm'}
                     />
@@ -54,7 +54,7 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
                     </div>
                     <Dropdown id={'itemCategory'} label={item.itemCategory} size={'sm'}>
                         {Object.values(ItemCategory).map((category) => (
-                            <DropdownItem value={item.itemCategory} key={category} onClick={() => props.handleItemValueChanged(category, 'itemCategory')} >{category}</DropdownItem>
+                            <DropdownItem value={item.itemCategory} key={category} onClick={() => handleItemValueChanged(category, 'itemCategory')} >{category}</DropdownItem>
                         ))}
                     </Dropdown>
                 </div>
@@ -64,7 +64,7 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
                     </div>
                     <Dropdown id={'itemStatus'} label={item.itemStatus} size={'sm'}>
                         {Object.values(ItemStatus).map((status) => (
-                            <DropdownItem value={item.itemCategory} key={status} onClick={() => props.handleItemValueChanged(status, 'itemStatus')} >{status}</DropdownItem>
+                            <DropdownItem value={item.itemCategory} key={status} onClick={() => handleItemValueChanged(status, 'itemStatus')} >{status}</DropdownItem>
                         ))}
                     </Dropdown>
                 </div>

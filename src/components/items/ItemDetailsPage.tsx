@@ -33,7 +33,7 @@ export const ItemDetailsPage: React.FC = () => {
 
     return (
         <div>
-            <div className={'m-3'}>
+            <div className={'m-2'}>
                 <h1 className='text-white'>{item.id ? item.name : 'Add Item'}</h1>
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
@@ -43,7 +43,7 @@ export const ItemDetailsPage: React.FC = () => {
             <div className={'mb-3 flex flex-row gap-3'}>
                 <ItemPartsList />
             </div>
-            <div className={'flex flex-row justify-between m-3'}>
+            <div className="flex flex-row justify-between m-2">
                 <Button color={'gray'} size={'sm'} onClick={() => navigate(-1)}>Cancel</Button>
                 <Button color={'green'} size={'sm'} className="btn btn-primary" onClick={handleAddUpdateItem}>Save</Button>
             </div>
