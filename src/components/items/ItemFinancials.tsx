@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Item} from "@/components/items/Item";
-import {Card, Table, TableBody, TableCell, TableRow} from "flowbite-react";
+import {Table, TableBody, TableCell, TableRow} from "flowbite-react";
 import {callGetCostOfParts} from "@/services/ItemsService";
 import {formatPercent, usdFormatter} from "@/utils/FormatUtils";
 
@@ -22,7 +22,8 @@ export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinanci
             try {
                 const costOfParts: number = await callGetCostOfParts(props.item.id);
                 setCostOfParts(costOfParts);
-                setSuggestedListPrice(costOfParts / .3);
+                const price = props.item.listPrice === 0 ? costOfParts / .3 : props.item.listPrice;
+                setSuggestedListPrice(price);
                 setAskPrice(suggestedListPrice * (1 - (discount / 100)));
             } catch (err) {
                 console.error('Error fetching cost of parts:', err);
@@ -33,7 +34,7 @@ export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinanci
     }, [props.item, setCostOfParts, suggestedListPrice, setSuggestedListPrice, setAskPrice, discount]);
 
     return (
-        <Card className="max-w-sm flex flex-col">
+        <div className='w-full flex flex-col flex-1 m-3 bg-gray-800 rounded-xl space-y-6 p-6'>
             <div className="text-white text-left mb-3">
                 <h2>Financial Data</h2>
             </div>
@@ -77,6 +78,6 @@ export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinanci
                     </TableRow>
                 </TableBody>
             </Table>
-        </Card>
+        </div>
     )
 }
