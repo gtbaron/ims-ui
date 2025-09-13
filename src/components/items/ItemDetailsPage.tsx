@@ -7,6 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {Button, Dropdown, DropdownItem, Label, TextInput} from "flowbite-react";
 import {ItemCategory} from "@/components/items/ItemCategory";
 import {ItemStatus} from "@/components/items/ItemStatus";
+import {ItemFinancials} from "@/components/items/ItemFinancials";
 
 export const ItemDetailsPage: React.FC = () => {
     const stateItem: Item = useAppSelector((state) => state.items.selectedItem);
@@ -91,12 +92,8 @@ export const ItemDetailsPage: React.FC = () => {
                     </div>
 
                 </div>
-                <div className="bg-gray-800 rounded-xl space-y-6 text-left w-1/2 p-6">
-                    <div>
-                        <div className="mb-1 block">
-                            <Label htmlFor="description">Description</Label>
-                        </div>
-                    </div>
+                <div className="rounded-xl space-y-6 text-center w-1/2 p-6">
+                    <ItemFinancials item={item} />
                 </div>
             </div>
             <div className={'bg-gray-800 rounded-xl space-y-6 text-left p-6 mb-3 w-full'}>

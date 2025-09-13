@@ -23,6 +23,11 @@ export const callUpdateItem = async (item: Item): Promise<Item> => {
     return response.data.data[0];
 }
 
+export const callGetCostOfParts = async (itemId: number): Promise<number> => {
+    const response = await api.get(`/items/${itemId}/cost-of-parts`);
+    return response.data.data[0].cost;
+}
+
 export const callGetItemParts = async (itemId: number): Promise<ItemPart[]> => {
     const response = await api.get(`/items/${itemId}/parts`);
     return response.data.data[0];
