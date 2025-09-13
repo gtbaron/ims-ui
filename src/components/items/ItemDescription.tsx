@@ -18,13 +18,13 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
 
     const {item, handleItemValueChanged} = props;
     return (
-        <div className={'text-left w-1/2 m-2 bg-gray-800 rounded-xl space-y-6 p-6'}>
+        <div className={'text-left w-1/2 m-2 bg-gray-800 text-gray-400 rounded-xl space-y-6 p-6'}>
             <div className="text-white text-left mb-3">
                 <h2>Item Description</h2>
             </div>
             <div>
-                <div className="mb-1 block">
-                    <Label htmlFor="name">Name</Label>
+                <div className={'mb-1 block'}>
+                    <span>Name</span>
                 </div>
                 <TextInput
                     id="name"
@@ -37,8 +37,8 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
             </div>
             <div className={'flex flex-row justify-between'}>
                 <div>
-                    <div className="mb-1 block">
-                        <Label htmlFor="listPrice">List Price</Label>
+                    <div className={'mb-1 block'}>
+                        <span>List Price</span>
                     </div>
                     <TextInput
                         id="listPrice"
@@ -49,8 +49,8 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
                     />
                 </div>
                 <div>
-                    <div className="mb-1 block">
-                        <Label htmlFor="itemCategory">Category</Label>
+                    <div className={'mb-1 block'}>
+                        <span>Category</span>
                     </div>
                     <Dropdown id={'itemCategory'} label={item.itemCategory} size={'sm'}>
                         {Object.values(ItemCategory).map((category) => (
@@ -60,7 +60,7 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
                 </div>
                 <div>
                     <div className="mb-1 block">
-                        <Label htmlFor="itemStatus">Status</Label>
+                        <span>Status</span>
                     </div>
                     <Dropdown id={'itemStatus'} label={item.itemStatus} size={'sm'}>
                         {Object.values(ItemStatus).map((status) => (

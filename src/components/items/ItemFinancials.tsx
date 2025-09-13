@@ -60,14 +60,14 @@ export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinanci
                         <TableCell className={'text-right p-2 w-3/5'}>Discount Amount:</TableCell>
                         <TableCell className={'p-2 w-3/5 text-yellow-400'}>{usdFormatter.format(suggestedListPrice * (discount / 100))}</TableCell>
                     </TableRow>
-                    <TableRow>
-                        <TableCell className={'text-right p-2 w-3/5'}>Ask Price:</TableCell>
-                        <TableCell className={'p-2 w-3/5 text-yellow-400'}>{usdFormatter.format(askPrice)}</TableCell>
-                    </TableRow>
                 </TableBody>
             </Table>
             <Table>
                 <TableBody>
+                    <TableRow>
+                        <TableCell className={'text-right p-2 w-3/5'}>Ask Price:</TableCell>
+                        <TableCell className={'p-2 w-3/5 text-green-400'}>{usdFormatter.format(askPrice)}</TableCell>
+                    </TableRow>
                     <TableRow>
                         <TableCell className={'text-right p-2 w-3/5'}>Margin:</TableCell>
                         <TableCell className={'p-2 w-3/5 text-green-400'}>{formatPercent(((askPrice - costOfParts) / costOfParts))}</TableCell>
