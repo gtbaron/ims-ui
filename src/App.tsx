@@ -5,7 +5,7 @@ import {Sidebar, SidebarItem, SidebarItemGroup, SidebarItems} from "flowbite-rea
 import {HiShoppingBag} from "react-icons/hi";
 import {HiWrench} from "react-icons/hi2";
 import {ItemListPage} from "@/components/items/ItemListPage";
-import {ItemDetailsPage} from "@/components/items/details/ItemDetailsPage";
+import {ItemDetailsPage} from "@/components/items/ItemDetailsPage";
 
 export default function App() {
     return (
