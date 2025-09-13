@@ -7,6 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {Button} from "flowbite-react";
 import {ItemFinancials} from "@/components/items/ItemFinancials";
 import {ItemDescription} from "@/components/items/ItemDescription";
+import {ItemPartsList} from "@/components/items/ItemPartsList";
 
 export const ItemDetailsPage: React.FC = () => {
     const stateItem: Item = useAppSelector((state) => state.items.selectedItem);
@@ -32,17 +33,17 @@ export const ItemDetailsPage: React.FC = () => {
 
     return (
         <div>
-            <div>
+            <div className={'m-3'}>
                 <h1 className='text-white'>{item.id ? item.name : 'Add Item'}</h1>
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
                 <ItemDescription item={item} handleItemValueChanged={updateItemValue} />
                 <ItemFinancials item={item} />
             </div>
-            <div className={'bg-gray-800 rounded-xl space-y-6 text-left p-6 mb-3 w-full'}>
-                Parts List
+            <div className={'mb-3 flex flex-row gap-3'}>
+                <ItemPartsList />
             </div>
-            <div className="flex flex-row justify-between">
+            <div className={'flex flex-row justify-between m-3'}>
                 <Button color={'gray'} size={'sm'} onClick={() => navigate(-1)}>Cancel</Button>
                 <Button color={'green'} size={'sm'} className="btn btn-primary" onClick={handleAddUpdateItem}>Save</Button>
             </div>

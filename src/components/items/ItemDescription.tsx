@@ -54,7 +54,7 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
                     </div>
                     <Dropdown id={'itemCategory'} label={item.itemCategory} size={'sm'}>
                         {Object.values(ItemCategory).map((category) => (
-                            <DropdownItem value={item.itemCategory} key={category} onClick={() => updateItemValue(category, 'itemCategory')} >{category}</DropdownItem>
+                            <DropdownItem value={item.itemCategory} key={category} onClick={() => props.handleItemValueChanged(category, 'itemCategory')} >{category}</DropdownItem>
                         ))}
                     </Dropdown>
                 </div>
@@ -64,7 +64,7 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
                     </div>
                     <Dropdown id={'itemStatus'} label={item.itemStatus} size={'sm'}>
                         {Object.values(ItemStatus).map((status) => (
-                            <DropdownItem value={item.itemCategory} key={status} onClick={() => updateItemValue(status, 'itemStatus')} >{status}</DropdownItem>
+                            <DropdownItem value={item.itemCategory} key={status} onClick={() => props.handleItemValueChanged(status, 'itemStatus')} >{status}</DropdownItem>
                         ))}
                     </Dropdown>
                 </div>
