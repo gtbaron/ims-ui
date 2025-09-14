@@ -1,17 +1,31 @@
 import React, {useEffect, useState} from "react";
-import {Dropdown, DropdownItem, Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "flowbite-react";
+import {
+    Button,
+    Dropdown,
+    DropdownItem,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeadCell,
+    TableRow,
+    TextInput
+} from "flowbite-react";
 import {Item} from "@/components/items/Item";
 import {Part} from "@/components/parts/Part";
 import {callGetParts} from "@/services/PartsService";
+import {callGetItemParts} from "@/services/ItemsService";
+import {ItemPart} from "@/components/items/ItemPart";
 
 type ItemPartsListProps = {
     item: Item;
-    itemPartsList: Part[];
 }
 
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
     const [masterPartsList, setMasterPartsList] = useState<Part[]>([]);
+    const [itemPartsList, setItemPartsList] = useState<ItemPart[]>([])
     const [partId, setPartId] = useState<number | undefined>(undefined);
+    const [quantity, setQuantity] = useState<number>(0);
 
     useEffect(() => {
         const fetchParts = async () => {
@@ -26,58 +40,76 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         fetchParts();
     }, [setMasterPartsList]);
 
-    const {item, itemPartsList} = props;
+    useEffect(() => {
+        const fetchItemParts = async (item: Item) => {
+            if (!item || !item.id) return;
+            try {
+                const data: ItemPart[] = await callGetItemParts(item.id);
+                setItemPartsList(data);
+            } catch (err) {
+                console.error('Error fetching parts:', err);
+            }
+        };
+
+        fetchItemParts(props.item);
+    }, [props.item, setItemPartsList]);
+
+    const handleAddItemPart = () => {
+        if (!partId || quantity === 0) return;
+
+        console.log(`Adding part ${partId} with quantity ${quantity} to item ${props.item.id}`);
+    }
 
     return (
         <div className={'bg-gray-800 rounded-xl space-y-6 text-left p-6 m-2 w-full'}>
             {
-                itemPartsList && <div className={'text-white text-left mb-2'}>
-                    <h2>Parts List</h2>
-                </div>
-            }
-            {
-                itemPartsList && <div className={'overflow-x-auto'}>
-                    <Table striped>
-                        <TableHead>
-                            <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                <TableHeadCell>Part</TableHeadCell>
-                                <TableHeadCell>Unit Cost</TableHeadCell>
-                                <TableHeadCell>Quantity</TableHeadCell>
-                                <TableHeadCell>Product Cost</TableHeadCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody className="divide-y">
-                            {/*{itemPartsList.map((part) => (*/}
-                            {/*    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800" >*/}
-                            {/*        <TableCell>{part.name}</TableCell>*/}
-                            {/*        <CurrencyTableCell value={part.bulkPrice / part.bulkQuantity}/>*/}
-                            {/*        <TableCell>{item.itemCategory}</TableCell>*/}
-                            {/*        <TableCell>{item.itemStatus}</TableCell>*/}
-                            {/*        <ActionsTableCell*/}
-                            {/*            handleDelete={handleDelete}*/}
-                            {/*            handleEdit={props.handleEdit}*/}
-                            {/*            id={item.id}*/}
-                            {/*            displayName={item.name}*/}
-                            {/*        />*/}
-                            {/*    </TableRow>*/}
-                            {/*))}*/}
-                            <TableRow className={'bg-white dark:border-gray-700 dark:bg-gray-800'}>
-                                <TableCell colSpan={5} ></TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </div>
+                (itemPartsList && itemPartsList.length > 0) && <>
+                    <div className={'text-white text-left mb-2'}>
+                        <h2>Parts List</h2>
+                    </div>
+                    <div className={'overflow-x-auto'}>
+                        <Table striped>
+                            <TableHead>
+                                <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                    <TableHeadCell>Part</TableHeadCell>
+                                    <TableHeadCell>Unit Cost</TableHeadCell>
+                                    <TableHeadCell>Quantity</TableHeadCell>
+                                    <TableHeadCell>Product Cost</TableHeadCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody className="divide-y">
+                                {/*{itemPartsList.map((part) => (*/}
+                                {/*    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800" >*/}
+                                {/*        <TableCell>{part.name}</TableCell>*/}
+                                {/*        <CurrencyTableCell value={part.bulkPrice / part.bulkQuantity}/>*/}
+                                {/*        <TableCell>{item.itemCategory}</TableCell>*/}
+                                {/*        <TableCell>{item.itemStatus}</TableCell>*/}
+                                {/*        <ActionsTableCell*/}
+                                {/*            handleDelete={handleDelete}*/}
+                                {/*            handleEdit={props.handleEdit}*/}
+                                {/*            id={item.id}*/}
+                                {/*            displayName={item.name}*/}
+                                {/*        />*/}
+                                {/*    </TableRow>*/}
+                                {/*))}*/}
+                                <TableRow className={'bg-white dark:border-gray-700 dark:bg-gray-800'}>
+                                    <TableCell colSpan={5} ></TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </div>
+                </>
             }
 
             <div className={'text-white text-left mb-2 flex flex-row justify-between'}>
-                <div>
+                <div className={'w-3/5'}>
                     <div className={'mb-1 block'}>
                         <span>Part</span>
                     </div>
                     <Dropdown
                         id={'partsList'}
                         size={'sm'}
-                        label={partId === 0 ? 'Select part' : masterPartsList.find(part => part.id === partId)?.name || 'Select part'}
+                        label={partId === 0 ? 'Select part...' : masterPartsList.find(part => part.id === partId)?.name || 'Select part...'}
                     >
                         <div className={'max-h-60 overflow-y-auto'}>
                             {masterPartsList.map((part) => (
@@ -86,16 +118,25 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                         </div>
                     </Dropdown>
                 </div>
-                {/*<div>*/}
-                {/*    <div className={'mb-1 block'}>*/}
-                {/*        <span>Status</span>*/}
-                {/*    </div>*/}
-                {/*    <Dropdown id={'itemStatus'} label={item.itemStatus} size={'sm'}>*/}
-                {/*        {Object.values(ItemStatus).map((status) => (*/}
-                {/*            <DropdownItem value={item.itemCategory} key={status} onClick={() => handleItemValueChanged(status, 'itemStatus')} >{status}</DropdownItem>*/}
-                {/*        ))}*/}
-                {/*    </Dropdown>*/}
-                {/*</div>*/}
+                <div>
+                    <div className={'mb-1 block'}>
+                        <span>Quantity</span>
+                    </div>
+                    <TextInput
+                        id='quantity'
+                        value={quantity}
+                        onChange={(event) => setQuantity(parseInt(event.target.value))}
+                        required
+                        sizing={'sm'}
+                        type='number'
+                        min={0}
+                    />
+                </div>
+                <div className={'flex flex-col justify-end'}>
+                    <div className={'mb-1 block float-right vertical-align-middle '}>
+                        <Button size={'sm'} className="btn btn-primary" onClick={() => handleAddItemPart()} >Add</Button>
+                    </div>
+                </div>
             </div>
         </div>
     )

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useState} from "react";
 import {callCreateItem, callUpdateItem} from "@/services/ItemsService";
 import {addItem, updateItem} from "@/store/slices/ItemsSlice";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
@@ -41,7 +41,7 @@ export const ItemDetailsPage: React.FC = () => {
                 <ItemFinancials item={item} />
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
-                <ItemPartsList />
+                <ItemPartsList item={item} />
             </div>
             <div className="flex flex-row justify-between m-2">
                 <Button color={'gray'} size={'sm'} onClick={() => navigate(-1)}>Cancel</Button>
