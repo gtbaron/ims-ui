@@ -1,12 +1,14 @@
-import React, {useEffect, useRef, useState} from "react";
-import {callCreateItem, callUpdateItem} from "@/services/ItemsService";
+import React, {useEffect, useState} from "react";
+import {callCreateItem, callGetCostOfParts, callUpdateItem, callCreateItemParts} from "@/services/ItemsService";
 import {addItem, updateItem} from "@/store/slices/ItemsSlice";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {Item} from "@/components/items/Item";
 import {useNavigate} from "react-router-dom";
-import {Button, Dropdown, DropdownItem, Label, TextInput} from "flowbite-react";
-import {ItemCategory} from "@/components/items/ItemCategory";
-import {ItemStatus} from "@/components/items/ItemStatus";
+import {Button} from "flowbite-react";
+import {ItemFinancials} from "@/components/items/ItemFinancials";
+import {ItemDescription} from "@/components/items/ItemDescription";
+import {ItemPartsList} from "@/components/items/ItemPartsList";
+import {ItemPart} from "@/components/items/ItemPart";
 
 export const ItemDetailsPage: React.FC = () => {
     const stateItem: Item = useAppSelector((state) => state.items.selectedItem);
@@ -14,20 +16,34 @@ export const ItemDetailsPage: React.FC = () => {
     const navigate = useNavigate();
 
     const [item, setItem] = useState(stateItem);
-    const nameInputRef = useRef<HTMLInputElement>(null);
+    const [costOfParts, setCostOfParts] = useState<number>(0);
+    const [newItemParts, setNewItemParts] = useState<ItemPart[]>([]);
+    const [suggestedListPrice, setSuggestedListPrice] = useState(0);
 
     useEffect(() => {
-        nameInputRef.current?.focus();
-    }, []);
+        const fetchCostOfParts = async () => {
+            if (!item.id) return;
+            try {
+                const originalCostOfParts: number = await callGetCostOfParts(item.id);
+                setCostOfParts(originalCostOfParts);
+            } catch (err) {
+                console.error('Error fetching cost of parts:', err);
+            }
+        }
+        fetchCostOfParts();
+    }, [setCostOfParts, item]);
 
-    const updateItemValue = (value: string, key: string) => {
+    const updateItemValue = (value: string | number, key: string) => {
         setItem({...item, [key]: value});
     }
 
     const handleAddUpdateItem = async () => {
         if (item.id) {
-            const updatedItem = await callUpdateItem(item);
+            const toUpdate: Item = {...item, listPrice: item.listPrice === 0 ? suggestedListPrice : item.listPrice};
+            const updatedItem = await callUpdateItem(toUpdate);
             dispatch(updateItem(updatedItem));
+
+            await callCreateItemParts(item.id, newItemParts);
         } else {
             const createdItem = await callCreateItem(item);
             dispatch(addItem(createdItem));
@@ -35,74 +51,31 @@ export const ItemDetailsPage: React.FC = () => {
         navigate('/items');
     }
 
+    const handleItemPartsCostChanged = (updatedCostOfParts: number) => {
+        setCostOfParts(updatedCostOfParts);
+    }
+
+    const handleSuggestedListPriceChanged = (suggestedListPrice: number) => {
+        setSuggestedListPrice(suggestedListPrice);
+    }
+
+    const handleAddItemPart = (itemPart: ItemPart) => {
+        setNewItemParts([...newItemParts, itemPart]);
+    }
+
     return (
         <div>
-            <div className="flex justify-between mb-3">
+            <div className={'m-2'}>
                 <h1 className='text-white'>{item.id ? item.name : 'Add Item'}</h1>
             </div>
-            <div className={'mb-3 flex flex-row justify-between'}>
-                <div className="bg-gray-800 rounded-xl space-y-6 text-left w-1/2 p-6 mr-3">
-                    <div>
-                        <div className="mb-1 block">
-                            <Label htmlFor="name">Name</Label>
-                        </div>
-                        <TextInput
-                            id="name"
-                            value={item.name}
-                            onChange={(event) => updateItemValue(event.target.value, 'name')}
-                            required
-                            ref={nameInputRef}
-                            sizing={'sm'}
-                        />
-                    </div>
-                    <div className={'flex flex-row justify-between'}>
-                        <div>
-                            <div className="mb-1 block">
-                                <Label htmlFor="listPrice">List Price</Label>
-                            </div>
-                            <TextInput
-                                id="listPrice"
-                                value={item.listPrice}
-                                onChange={(event) => updateItemValue(event.target.value, 'listPrice')}
-                                required
-                                sizing={'sm'}
-                            />
-                        </div>
-                        <div>
-                            <div className="mb-1 block">
-                                <Label htmlFor="itemCategory">Category</Label>
-                            </div>
-                            <Dropdown id={'itemCategory'} label={item.itemCategory} size={'sm'}>
-                                {Object.values(ItemCategory).map((category) => (
-                                    <DropdownItem value={item.itemCategory} key={category} onClick={() => updateItemValue(category, 'itemCategory')} >{category}</DropdownItem>
-                                ))}
-                            </Dropdown>
-                        </div>
-                        <div>
-                            <div className="mb-1 block">
-                                <Label htmlFor="itemStatus">Status</Label>
-                            </div>
-                            <Dropdown id={'itemStatus'} label={item.itemStatus} size={'sm'}>
-                                {Object.values(ItemStatus).map((status) => (
-                                    <DropdownItem value={item.itemCategory} key={status} onClick={() => updateItemValue(status, 'itemStatus')} >{status}</DropdownItem>
-                                ))}
-                            </Dropdown>
-                        </div>
-                    </div>
-
-                </div>
-                <div className="bg-gray-800 rounded-xl space-y-6 text-left w-1/2 p-6">
-                    <div>
-                        <div className="mb-1 block">
-                            <Label htmlFor="description">Description</Label>
-                        </div>
-                    </div>
-                </div>
+            <div className={'mb-3 flex flex-row gap-3'}>
+                <ItemDescription item={item} handleItemValueChanged={updateItemValue} />
+                <ItemFinancials item={item} costOfParts={costOfParts} handleSuggestedListPriceChanged={handleSuggestedListPriceChanged} />
             </div>
-            <div className={'bg-gray-800 rounded-xl space-y-6 text-left p-6 mb-3 w-full'}>
-                Parts List
+            <div className={'mb-3 flex flex-row gap-3'}>
+                <ItemPartsList item={item} handleItemPartsCostChanged={handleItemPartsCostChanged} handleItemPartAdded={handleAddItemPart} />
             </div>
-            <div className="flex flex-row justify-between">
+            <div className="flex flex-row justify-between m-2">
                 <Button color={'gray'} size={'sm'} onClick={() => navigate(-1)}>Cancel</Button>
                 <Button color={'green'} size={'sm'} className="btn btn-primary" onClick={handleAddUpdateItem}>Save</Button>
             </div>
