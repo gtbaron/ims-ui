@@ -16,6 +16,8 @@ import {Part} from "@/components/parts/Part";
 import {callGetParts} from "@/services/PartsService";
 import {callGetItemParts} from "@/services/ItemsService";
 import {ItemPart} from "@/components/items/ItemPart";
+import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
+import {usdFormatter} from "@/utils/FormatUtils";
 
 type ItemPartsListProps = {
     item: Item;
@@ -55,9 +57,30 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
     }, [props.item, setItemPartsList]);
 
     const handleAddItemPart = () => {
-        if (!partId || quantity === 0) return;
+        if (!itemPartsList || !partId || quantity === 0) return;
 
-        console.log(`Adding part ${partId} with quantity ${quantity} to item ${props.item.id}`);
+        const toAdd: ItemPart = {
+            itemId: props.item.id as number,
+            partId: partId,
+            quantity: quantity
+        };
+
+        setItemPartsList([...itemPartsList, toAdd]);
+        setPartId(undefined);
+        setQuantity(0);
+        setQuantity(0);
+    }
+
+    const getNameFor = (partId: number | undefined): string => {
+        if (!partId) return '';
+        const part = masterPartsList.find(part => part.id === partId);
+        return part ? part.name : '';
+    }
+
+    const getUnitCostFor = (partId: number | undefined): number => {
+        if (!partId) return 0;
+        const part = masterPartsList.find(part => part.id === partId);
+        return part ? part.bulkPrice / part.bulkQuantity : 0;
     }
 
     return (
@@ -67,7 +90,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                     <div className={'text-white text-left mb-2'}>
                         <h2>Parts List</h2>
                     </div>
-                    <div className={'overflow-x-auto'}>
+                    <div className={'overflow-x-auto border border-gray-700 rounded-xl'}>
                         <Table striped>
                             <TableHead>
                                 <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -78,20 +101,14 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                 </TableRow>
                             </TableHead>
                             <TableBody className="divide-y">
-                                {/*{itemPartsList.map((part) => (*/}
-                                {/*    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800" >*/}
-                                {/*        <TableCell>{part.name}</TableCell>*/}
-                                {/*        <CurrencyTableCell value={part.bulkPrice / part.bulkQuantity}/>*/}
-                                {/*        <TableCell>{item.itemCategory}</TableCell>*/}
-                                {/*        <TableCell>{item.itemStatus}</TableCell>*/}
-                                {/*        <ActionsTableCell*/}
-                                {/*            handleDelete={handleDelete}*/}
-                                {/*            handleEdit={props.handleEdit}*/}
-                                {/*            id={item.id}*/}
-                                {/*            displayName={item.name}*/}
-                                {/*        />*/}
-                                {/*    </TableRow>*/}
-                                {/*))}*/}
+                                {itemPartsList.map((itemPart) => (
+                                    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800" >
+                                        <TableCell>{getNameFor(itemPart.partId)}</TableCell>
+                                        <CurrencyTableCell value={getUnitCostFor(itemPart.partId)}/>
+                                        <TableCell>{itemPart.quantity}</TableCell>
+                                        <TableCell>{usdFormatter.format(itemPart.quantity * getUnitCostFor(itemPart.partId))}</TableCell>
+                                    </TableRow>
+                                ))}
                                 <TableRow className={'bg-white dark:border-gray-700 dark:bg-gray-800'}>
                                     <TableCell colSpan={5} ></TableCell>
                                 </TableRow>

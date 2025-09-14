@@ -30,5 +30,5 @@ export const callGetCostOfParts = async (itemId: number): Promise<number> => {
 
 export const callGetItemParts = async (itemId: number): Promise<ItemPart[]> => {
     const response = await api.get(`/items/${itemId}/parts`);
-    return response.data.data[0];
+    return response.data.data;
 }
