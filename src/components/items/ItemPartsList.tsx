@@ -66,22 +66,25 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
             quantity: quantity
         };
 
-        setItemPartsList([...itemPartsList, toAdd]);
+        const updatedItemPartsList = [...itemPartsList, toAdd];
+        setItemPartsList(updatedItemPartsList);
         setPartId(undefined);
         setQuantity(0);
-        props.handleItemPartsCostChanged(recalculateCostOfParts());
     }
 
-    const recalculateCostOfParts = (): number => {
-        let costOfParts = 0;
-        itemPartsList.forEach((itemPart) => {
-            const part = masterPartsList.find(part => part.id === itemPart.partId);
-            if (part) {
-                costOfParts += (part.bulkPrice / part.bulkQuantity) * itemPart.quantity;
-            }
-        });
-        return costOfParts;
-    }
+    useEffect(() => {
+        const costOfParts = itemPartsList.reduce(
+            (total, itemPart) => {
+                const part = masterPartsList.find(part => part.id === itemPart.partId);
+                if (part) {
+                    return total + (part.bulkPrice / part.bulkQuantity) * itemPart.quantity;
+                }
+                return total;
+            },
+            0
+        )
+        props.handleItemPartsCostChanged(costOfParts);
+    }, [itemPartsList, props, masterPartsList]);
 
     const getNameFor = (partId: number | undefined): string => {
         if (!partId) return '';
@@ -114,7 +117,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                             </TableHead>
                             <TableBody className="divide-y">
                                 {itemPartsList.map((itemPart) => (
-                                    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800" >
+                                    <TableRow key={`${itemPart.partId}_${itemPart.quantity}`} className="bg-white dark:border-gray-700 dark:bg-gray-800" >
                                         <TableCell>{getNameFor(itemPart.partId)}</TableCell>
                                         <CurrencyTableCell value={getUnitCostFor(itemPart.partId)}/>
                                         <TableCell>{itemPart.quantity}</TableCell>

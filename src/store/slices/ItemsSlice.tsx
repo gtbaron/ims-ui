@@ -13,7 +13,7 @@ const defaultItem: Item = {
 type ItemsState = {
     list: Item[];
     selectedItem: Item;
-}
+};
 
 const initialState: ItemsState = {
     list: [],
@@ -46,7 +46,7 @@ export const itemsSlice = createSlice({
             state.selectedItem = defaultItem;
         }
     },
-})
+});
 
 export const { setItemsList, addItem, updateItem, removeItem, setSelectedItem, clearSelectedItem } = itemsSlice.actions;
 

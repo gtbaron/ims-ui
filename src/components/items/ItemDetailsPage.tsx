@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {callCreateItem, callUpdateItem} from "@/services/ItemsService";
+import React, {useEffect, useState} from "react";
+import {callCreateItem, callGetCostOfParts, callUpdateItem} from "@/services/ItemsService";
 import {addItem, updateItem} from "@/store/slices/ItemsSlice";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {Item} from "@/components/items/Item";
@@ -8,7 +8,6 @@ import {Button} from "flowbite-react";
 import {ItemFinancials} from "@/components/items/ItemFinancials";
 import {ItemDescription} from "@/components/items/ItemDescription";
 import {ItemPartsList} from "@/components/items/ItemPartsList";
-import {ItemPart} from "@/components/items/ItemPart";
 
 export const ItemDetailsPage: React.FC = () => {
     const stateItem: Item = useAppSelector((state) => state.items.selectedItem);
@@ -16,7 +15,20 @@ export const ItemDetailsPage: React.FC = () => {
     const navigate = useNavigate();
 
     const [item, setItem] = useState(stateItem);
-    const [costOfParts, setCostOfParts] = useState<number | undefined>(undefined);
+    const [costOfParts, setCostOfParts] = useState<number>(0);
+
+    useEffect(() => {
+        const fetchCostOfParts = async () => {
+            if (!item.id) return;
+            try {
+                const originalCostOfParts: number = await callGetCostOfParts(item.id);
+                setCostOfParts(originalCostOfParts);
+            } catch (err) {
+                console.error('Error fetching cost of parts:', err);
+            }
+        }
+        fetchCostOfParts();
+    }, [setCostOfParts, item]);
 
     const updateItemValue = (value: string | number, key: string) => {
         setItem({...item, [key]: value});

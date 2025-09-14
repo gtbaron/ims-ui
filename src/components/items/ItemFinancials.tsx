@@ -1,45 +1,28 @@
 import React, {useEffect, useState} from "react";
 import {Item} from "@/components/items/Item";
 import {Table, TableBody, TableCell, TableRow} from "flowbite-react";
-import {callGetCostOfParts} from "@/services/ItemsService";
 import {formatPercent, usdFormatter} from "@/utils/FormatUtils";
+import {useAppSelector} from "@/store/hooks";
 
 type ItemFinancialsProps = {
     item: Item;
-    costOfParts?: number;
+    costOfParts: number;
 };
 
 export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinancialsProps) => {
+    const discount: number = useAppSelector((state) => state.shop.discount);
 
     const [costOfParts, setCostOfParts] = useState(0);
     const [suggestedListPrice, setSuggestedListPrice] = useState(0);
-    const [discount] = useState(25);
     const [askPrice, setAskPrice] = useState(0);
 
     useEffect(() => {
-        const fetchCostOfParts = async () => {
-            if (!props.item.id) return;
+        if (!props.costOfParts) return;
 
-            if (props.costOfParts) {
-                setCostOfParts(props.costOfParts);
-                setSuggestedListPrice(props.costOfParts / .3);
-                setAskPrice(props.costOfParts * (1 - (discount / 100)));
-                return;
-            }
-
-            try {
-                const costOfParts: number = await callGetCostOfParts(props.item.id);
-                setCostOfParts(costOfParts);
-                const price = props.item.listPrice === 0 ? costOfParts / .3 : props.item.listPrice;
-                setSuggestedListPrice(price);
-                setAskPrice(suggestedListPrice * (1 - (discount / 100)));
-            } catch (err) {
-                console.error('Error fetching cost of parts:', err);
-            }
-        };
-
-        fetchCostOfParts();
-    }, [props, setCostOfParts, suggestedListPrice, setSuggestedListPrice, setAskPrice, discount]);
+        setCostOfParts(props.costOfParts);
+        setSuggestedListPrice(props.item.listPrice === 0 ? props.costOfParts / .3 : props.item.listPrice);
+        setAskPrice(suggestedListPrice * (1 - (discount / 100)));
+    }, [props.costOfParts, props.item.listPrice, setCostOfParts, suggestedListPrice, setSuggestedListPrice, setAskPrice, discount]);
 
     return (
         <div className='w-full flex flex-col flex-1 m-2 bg-gray-800 rounded-xl space-y-6 p-6'>
@@ -78,11 +61,11 @@ export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinanci
                     </TableRow>
                     <TableRow>
                         <TableCell className={'text-right p-2 w-3/5'}>Margin:</TableCell>
-                        <TableCell className={'p-2 w-3/5 text-green-400'}>{formatPercent(((askPrice - costOfParts) / costOfParts))}</TableCell>
+                        <TableCell className={'p-2 w-3/5 text-green-400'}>{costOfParts ? formatPercent(((askPrice - costOfParts) / costOfParts)) : '-'}</TableCell>
                     </TableRow>
                     <TableRow>
                         <TableCell className={'text-right p-2 w-3/5'}>Profit:</TableCell>
-                        <TableCell className={'p-2 w-3/5 text-green-400'}>{usdFormatter.format(askPrice - costOfParts)}</TableCell>
+                        <TableCell className={'p-2 w-3/5 text-green-400'}>{costOfParts ? usdFormatter.format(askPrice - costOfParts) : '-'}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>
