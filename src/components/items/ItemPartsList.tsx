@@ -114,30 +114,32 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                     <div className={'text-white text-left mb-2'}>
                         <h2>Parts List</h2>
                     </div>
-                    <div className={'overflow-x-auto border border-gray-700 rounded-xl'}>
-                        <Table striped>
-                            <TableHead>
-                                <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                    <TableHeadCell>Part</TableHeadCell>
-                                    <TableHeadCell>Unit Cost</TableHeadCell>
-                                    <TableHeadCell>Quantity</TableHeadCell>
-                                    <TableHeadCell>Product Cost</TableHeadCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody className="divide-y">
-                                {itemPartsList.map((itemPart) => (
-                                    <TableRow key={`${itemPart.partId}_${itemPart.quantity}`} className="bg-white dark:border-gray-700 dark:bg-gray-800" >
-                                        <TableCell>{getNameFor(itemPart.partId)}</TableCell>
-                                        <CurrencyTableCell value={getUnitCostFor(itemPart.partId)}/>
-                                        <TableCell>{itemPart.quantity}</TableCell>
-                                        <TableCell>{usdFormatter.format(itemPart.quantity * getUnitCostFor(itemPart.partId))}</TableCell>
+                    <div className={'max-h-60 overflow-y-auto rounded-md'}>
+                        <div className={'border border-gray-700 rounded-xl'}>
+                            <Table striped>
+                                <TableHead className={'sticky top-0 bg-gray-800 z-10'}>
+                                    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                        <TableHeadCell>Part</TableHeadCell>
+                                        <TableHeadCell>Unit Cost</TableHeadCell>
+                                        <TableHeadCell>Quantity</TableHeadCell>
+                                        <TableHeadCell>Product Cost</TableHeadCell>
                                     </TableRow>
-                                ))}
-                                <TableRow className={'bg-white dark:border-gray-700 dark:bg-gray-800'}>
-                                    <TableCell colSpan={5} ></TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
+                                </TableHead>
+                                <TableBody className="divide-y">
+                                    {itemPartsList.map((itemPart) => (
+                                        <TableRow key={`${itemPart.partId}_${itemPart.quantity}`} className="bg-white dark:border-gray-700 dark:bg-gray-800" >
+                                            <TableCell>{getNameFor(itemPart.partId)}</TableCell>
+                                            <CurrencyTableCell value={getUnitCostFor(itemPart.partId)}/>
+                                            <TableCell>{itemPart.quantity}</TableCell>
+                                            <TableCell>{usdFormatter.format(itemPart.quantity * getUnitCostFor(itemPart.partId))}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                    <TableRow className={'bg-white dark:border-gray-700 dark:bg-gray-800'}>
+                                        <TableCell colSpan={5} ></TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
                 </>
             }

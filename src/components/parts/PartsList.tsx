@@ -24,9 +24,9 @@ const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
     }
 
     return (
-        <div className="overflow-x-auto">
+        <div className={'max-h-screen overflow-y-auto rounded-md'}>
             <Table striped>
-                <TableHead>
+                <TableHead className={'sticky top-0 bg-gray-800 z-10'}>
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                         <TableHeadCell>Part</TableHeadCell>
                         <TableHeadCell>Provider</TableHeadCell>

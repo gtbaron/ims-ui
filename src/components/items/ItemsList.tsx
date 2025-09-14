@@ -25,10 +25,10 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
     }
 
     return (
-        <div className="overflow-x-auto">
+        <div className={'max-h-screen overflow-y-auto rounded-md'}>
             <Table striped>
-                <TableHead>
-                    <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <TableHead className={'sticky top-0 bg-gray-800 z-10'}>
+                    <TableRow className={'bg-white dark:border-gray-700 dark:bg-gray-800'}>
                         <TableHeadCell>Name</TableHeadCell>
                         <TableHeadCell>List Price</TableHeadCell>
                         <TableHeadCell>Category</TableHeadCell>
