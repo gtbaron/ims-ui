@@ -165,6 +165,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                         sizing={'sm'}
                         type='number'
                         min={0}
+                        max={1000}
                     />
                 </div>
                 <div className={'flex flex-col justify-end'}>
