@@ -160,12 +160,13 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                     <TextInput
                         id='quantity'
                         value={quantity}
-                        onChange={(event) => setQuantity(parseInt(event.target.value))}
+                        onChange={(event) => setQuantity(parseFloat(event.target.value))}
                         required
                         sizing={'sm'}
                         type='number'
                         min={0}
                         max={1000}
+                        step='any'
                     />
                 </div>
                 <div className={'flex flex-col justify-end'}>
