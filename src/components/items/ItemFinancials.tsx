@@ -7,6 +7,7 @@ import {useAppSelector} from "@/store/hooks";
 type ItemFinancialsProps = {
     item: Item;
     costOfParts: number;
+    handleSuggestedListPriceChanged: (askPrice: number) => void;
 };
 
 export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinancialsProps) => {
@@ -19,10 +20,13 @@ export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinanci
     useEffect(() => {
         if (!props.costOfParts) return;
 
+        const newSuggestedListPrice = props.item.listPrice === 0 ? props.costOfParts / .3 : props.item.listPrice;
+        setSuggestedListPrice(newSuggestedListPrice);
         setCostOfParts(props.costOfParts);
-        setSuggestedListPrice(props.item.listPrice === 0 ? props.costOfParts / .3 : props.item.listPrice);
-        setAskPrice(suggestedListPrice * (1 - (discount / 100)));
-    }, [props.costOfParts, props.item.listPrice, setCostOfParts, suggestedListPrice, setSuggestedListPrice, setAskPrice, discount]);
+        setAskPrice(newSuggestedListPrice * (1 - (discount / 100)));
+
+        props.handleSuggestedListPriceChanged(newSuggestedListPrice);
+    }, [props, setCostOfParts, suggestedListPrice, setSuggestedListPrice, askPrice, setAskPrice, discount]);
 
     return (
         <div className='w-full flex flex-col flex-1 m-2 bg-gray-800 rounded-xl space-y-6 p-6'>

@@ -22,6 +22,7 @@ import {usdFormatter} from "@/utils/FormatUtils";
 type ItemPartsListProps = {
     item: Item;
     handleItemPartsCostChanged: (costOfParts: number) => void;
+    handleItemPartAdded: (itemPart: ItemPart) => void;
 }
 
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
@@ -70,6 +71,8 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         setItemPartsList(updatedItemPartsList);
         setPartId(undefined);
         setQuantity(0);
+
+        props.handleItemPartAdded(toAdd);
     }
 
     useEffect(() => {
@@ -133,7 +136,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                 </>
             }
 
-            <div className={'text-white text-left mb-2 flex flex-row justify-between'}>
+            <div className={'text-gray-400 text-left mb-2 flex flex-row justify-between'}>
                 <div className={'w-3/5'}>
                     <div className={'mb-1 block'}>
                         <span>Part</span>

@@ -32,3 +32,11 @@ export const callGetItemParts = async (itemId: number): Promise<ItemPart[]> => {
     const response = await api.get(`/items/${itemId}/parts`);
     return response.data.data;
 }
+
+export const callCreateItemParts = async (itemId: number, itemParts: ItemPart[]) => {
+    for (const itemPart of itemParts) {
+        await api.post(`/items/${itemId}/parts/${itemPart.partId}`, {
+            quantity: itemPart.quantity
+        });
+    }
+}
