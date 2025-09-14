@@ -7,7 +7,8 @@ const defaultItem: Item = {
     name: '',
     listPrice: 0,
     itemCategory: ItemCategory.HOME_DECOR,
-    itemStatus: ItemStatus.DRAFT
+    itemStatus: ItemStatus.DRAFT,
+    overrideSuggestedListPrice: false
 };
 
 type ItemsState = {

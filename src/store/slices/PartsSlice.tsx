@@ -14,7 +14,7 @@ export const partsSlice = createSlice({
     initialState,
     reducers: {
         setParts: (state, action: PayloadAction<Part[]>) => {
-            state.list = action.payload;
+            state.list = action.payload.sort((a, b) => a.name.localeCompare(b.name));
         },
         addPart: (state, action: PayloadAction<Part>) => {
             state.list.push(action.payload);

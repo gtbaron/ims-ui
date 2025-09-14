@@ -18,6 +18,8 @@ import {callGetItemParts} from "@/services/ItemsService";
 import {ItemPart} from "@/components/items/ItemPart";
 import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
 import {usdFormatter} from "@/utils/FormatUtils";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {setParts} from "@/store/slices/PartsSlice";
 
 type ItemPartsListProps = {
     item: Item;
@@ -26,7 +28,9 @@ type ItemPartsListProps = {
 }
 
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
-    const [masterPartsList, setMasterPartsList] = useState<Part[]>([]);
+    const dispatch = useAppDispatch();
+    const masterPartsList = useAppSelector((state) => state.parts.list);
+
     const [itemPartsList, setItemPartsList] = useState<ItemPart[]>([])
     const [partId, setPartId] = useState<number | undefined>(undefined);
     const [quantity, setQuantity] = useState<number>(0);
@@ -35,14 +39,16 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         const fetchParts = async () => {
             try {
                 const data: Part[] = await callGetParts();
-                setMasterPartsList(data);
+                dispatch(setParts(data));
             } catch (err) {
                 console.error('Error fetching parts:', err);
             }
         };
 
-        fetchParts();
-    }, [setMasterPartsList]);
+        if (masterPartsList.length === 0) {
+            fetchParts();
+        }
+    }, [dispatch, masterPartsList]);
 
     useEffect(() => {
         const fetchItemParts = async (item: Item) => {

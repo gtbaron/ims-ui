@@ -31,8 +31,10 @@ export const PartsListPage = () => {
             }
         };
 
-        fetchParts();
-    }, [dispatch]);
+        if (parts.length === 0) {
+            fetchParts();
+        }
+    }, [dispatch, parts]);
 
     const handleEdit = (partId: number | undefined) => {
         if (!partId) return;
