@@ -21,6 +21,7 @@ import {usdFormatter} from "@/utils/FormatUtils";
 
 type ItemPartsListProps = {
     item: Item;
+    handleItemPartsCostChanged: (costOfParts: number) => void;
 }
 
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
@@ -68,7 +69,18 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         setItemPartsList([...itemPartsList, toAdd]);
         setPartId(undefined);
         setQuantity(0);
-        setQuantity(0);
+        props.handleItemPartsCostChanged(recalculateCostOfParts());
+    }
+
+    const recalculateCostOfParts = (): number => {
+        let costOfParts = 0;
+        itemPartsList.forEach((itemPart) => {
+            const part = masterPartsList.find(part => part.id === itemPart.partId);
+            if (part) {
+                costOfParts += (part.bulkPrice / part.bulkQuantity) * itemPart.quantity;
+            }
+        });
+        return costOfParts;
     }
 
     const getNameFor = (partId: number | undefined): string => {

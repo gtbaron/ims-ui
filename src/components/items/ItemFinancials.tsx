@@ -6,6 +6,7 @@ import {formatPercent, usdFormatter} from "@/utils/FormatUtils";
 
 type ItemFinancialsProps = {
     item: Item;
+    costOfParts?: number;
 };
 
 export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinancialsProps) => {
@@ -19,6 +20,13 @@ export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinanci
         const fetchCostOfParts = async () => {
             if (!props.item.id) return;
 
+            if (props.costOfParts) {
+                setCostOfParts(props.costOfParts);
+                setSuggestedListPrice(props.costOfParts / .3);
+                setAskPrice(props.costOfParts * (1 - (discount / 100)));
+                return;
+            }
+
             try {
                 const costOfParts: number = await callGetCostOfParts(props.item.id);
                 setCostOfParts(costOfParts);
@@ -31,7 +39,7 @@ export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinanci
         };
 
         fetchCostOfParts();
-    }, [props.item, setCostOfParts, suggestedListPrice, setSuggestedListPrice, setAskPrice, discount]);
+    }, [props, setCostOfParts, suggestedListPrice, setSuggestedListPrice, setAskPrice, discount]);
 
     return (
         <div className='w-full flex flex-col flex-1 m-2 bg-gray-800 rounded-xl space-y-6 p-6'>
