@@ -1,12 +1,13 @@
 import React, {useEffect, useRef} from "react";
 import {Item} from "@/components/items/Item";
-import {Dropdown, DropdownItem, Label, TextInput} from "flowbite-react";
+import {Checkbox, Dropdown, DropdownItem, Label, TextInput} from "flowbite-react";
 import {ItemCategory} from "@/components/items/ItemCategory";
 import {ItemStatus} from "@/components/items/ItemStatus";
 
 type ItemDescriptionProps = {
     item: Item;
     handleItemValueChanged: (value: string, key: string) => void;
+    updateItemValue: (value: string | number | boolean, key: string) => void;
 }
 
 export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescriptionProps) => {
@@ -15,6 +16,10 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
     useEffect(() => {
         nameInputRef.current?.focus();
     }, []);
+
+    const handleOverrideSuggestedListPriceChanged = (override: boolean) => {
+        props.updateItemValue(override, 'overrideSuggestedListPrice');
+    }
 
     const {item, handleItemValueChanged} = props;
     return (
@@ -68,6 +73,14 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
                         ))}
                     </Dropdown>
                 </div>
+            </div>
+            <div className="flex items-start gap-2">
+                <Checkbox
+                    id="priceOverride"
+                    checked={props.item.overrideSuggestedListPrice}
+                    onChange={(e) => handleOverrideSuggestedListPriceChanged(e.target.checked)}
+                />
+                <Label className={'dark:text-gray-400'} htmlFor="priceOverride">Override suggested list price</Label>
             </div>
         </div>
     )

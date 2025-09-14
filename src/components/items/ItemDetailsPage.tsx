@@ -33,13 +33,13 @@ export const ItemDetailsPage: React.FC = () => {
         fetchCostOfParts();
     }, [setCostOfParts, item]);
 
-    const updateItemValue = (value: string | number, key: string) => {
+    const updateItemValue = (value: string | number | boolean, key: string) => {
         setItem({...item, [key]: value});
     }
 
     const handleAddUpdateItem = async () => {
         if (item.id) {
-            const toUpdate: Item = {...item, listPrice: item.listPrice === 0 ? suggestedListPrice : item.listPrice};
+            const toUpdate: Item = {...item, listPrice: item.overrideSuggestedListPrice ? item.listPrice : suggestedListPrice};
             const updatedItem = await callUpdateItem(toUpdate);
             dispatch(updateItem(updatedItem));
 
@@ -69,7 +69,7 @@ export const ItemDetailsPage: React.FC = () => {
                 <h1 className='text-white'>{item.id ? item.name : 'Add Item'}</h1>
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
-                <ItemDescription item={item} handleItemValueChanged={updateItemValue} />
+                <ItemDescription item={item} handleItemValueChanged={updateItemValue} updateItemValue={updateItemValue} />
                 <ItemFinancials item={item} costOfParts={costOfParts} handleSuggestedListPriceChanged={handleSuggestedListPriceChanged} />
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
