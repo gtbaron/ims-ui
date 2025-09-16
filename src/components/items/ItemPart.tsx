@@ -3,4 +3,5 @@ export type ItemPart = {
     itemId: number;
     partId: number;
     quantity: number;
+    dirty?: boolean;
 }

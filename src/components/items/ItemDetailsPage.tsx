@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {callCreateItem, callGetCostOfParts, callUpdateItem, callCreateItemParts} from "@/services/ItemsService";
+import {
+    callCreateItem,
+    callCreateItemParts,
+    callGetCostOfParts,
+    callGetItemParts,
+    callUpdateItem, callUpdateItemParts
+} from "@/services/ItemsService";
 import {addItem, updateItem} from "@/store/slices/ItemsSlice";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {Item} from "@/components/items/Item";
@@ -17,6 +23,7 @@ export const ItemDetailsPage: React.FC = () => {
 
     const [item, setItem] = useState(stateItem);
     const [costOfParts, setCostOfParts] = useState<number>(0);
+    const [itemPartsList, setItemPartsList] = useState<ItemPart[]>([]);
     const [newItemParts, setNewItemParts] = useState<ItemPart[]>([]);
     const [suggestedListPrice, setSuggestedListPrice] = useState(0);
 
@@ -33,6 +40,20 @@ export const ItemDetailsPage: React.FC = () => {
         fetchCostOfParts();
     }, [setCostOfParts, item]);
 
+    useEffect(() => {
+        const fetchItemParts = async (item: Item) => {
+            if (!item || !item.id) return;
+            try {
+                const data: ItemPart[] = await callGetItemParts(item.id);
+                setItemPartsList(data);
+            } catch (err) {
+                console.error('Error fetching parts:', err);
+            }
+        };
+
+        fetchItemParts(item);
+    }, [item, setItemPartsList]);
+
     const updateItemValue = (value: string | number | boolean, key: string) => {
         setItem({...item, [key]: value});
     }
@@ -44,10 +65,18 @@ export const ItemDetailsPage: React.FC = () => {
             dispatch(updateItem(updatedItem));
 
             await callCreateItemParts(item.id, newItemParts);
+            await callUpdateItemParts(itemPartsList.filter(ip => ip.dirty));
         } else {
+            if (!item.overrideSuggestedListPrice) {
+                item.listPrice = suggestedListPrice;
+            }
             const createdItem = await callCreateItem(item);
             dispatch(addItem(createdItem));
+
+            await callCreateItemParts(createdItem.id, newItemParts);
+            await callUpdateItemParts(itemPartsList.filter(ip => ip.dirty));
         }
+
         navigate('/items');
     }
 
@@ -59,7 +88,15 @@ export const ItemDetailsPage: React.FC = () => {
         setSuggestedListPrice(suggestedListPrice);
     }
 
-    const handleAddItemPart = (itemPart: ItemPart) => {
+    const handleAddUpdateItemPart = (itemPart: ItemPart) => {
+        if (itemPart.id) {
+            itemPart.dirty = true;
+            const updatedPartsList = itemPartsList.filter(ip => ip.id !== itemPart.id);
+            updatedPartsList.push(itemPart);
+            updatedPartsList.sort((a, b) => a.partId - b.partId);
+            setItemPartsList(updatedPartsList);
+            return;
+        }
         setNewItemParts([...newItemParts, itemPart]);
     }
 
@@ -70,10 +107,19 @@ export const ItemDetailsPage: React.FC = () => {
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
                 <ItemDescription item={item} handleItemValueChanged={updateItemValue} updateItemValue={updateItemValue} />
-                <ItemFinancials item={item} costOfParts={costOfParts} handleSuggestedListPriceChanged={handleSuggestedListPriceChanged} />
+                <ItemFinancials
+                    item={item}
+                    costOfParts={costOfParts}
+                    handleSuggestedListPriceChanged={handleSuggestedListPriceChanged}
+                />
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
-                <ItemPartsList item={item} handleItemPartsCostChanged={handleItemPartsCostChanged} handleItemPartAdded={handleAddItemPart} />
+                <ItemPartsList
+                    item={item}
+                    itemPartsList={itemPartsList}
+                    handleItemPartsCostChanged={handleItemPartsCostChanged}
+                    handleAddUpdateItemPart={handleAddUpdateItemPart}
+                />
             </div>
             <div className="flex flex-row justify-between m-2">
                 <Button color={'gray'} size={'sm'} onClick={() => navigate(-1)}>Cancel</Button>

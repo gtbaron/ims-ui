@@ -4,6 +4,7 @@ import {ItemCategory} from "@/components/items/ItemCategory";
 import {ItemStatus} from "@/components/items/ItemStatus";
 
 const defaultItem: Item = {
+    id: 0,
     name: '',
     listPrice: 0,
     itemCategory: ItemCategory.HOME_DECOR,

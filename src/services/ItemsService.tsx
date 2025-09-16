@@ -40,3 +40,11 @@ export const callCreateItemParts = async (itemId: number, itemParts: ItemPart[])
         });
     }
 }
+
+export const callUpdateItemParts = async (itemParts: ItemPart[]) => {
+    for (const itemPart of itemParts) {
+        await api.post(`/items/${itemPart.itemId}/parts/${itemPart.partId}`, {
+            quantity: itemPart.quantity
+        });
+    }
+}

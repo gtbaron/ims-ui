@@ -14,26 +14,35 @@ import {
 import {Item} from "@/components/items/Item";
 import {Part} from "@/components/parts/Part";
 import {callGetParts} from "@/services/PartsService";
-import {callGetItemParts} from "@/services/ItemsService";
 import {ItemPart} from "@/components/items/ItemPart";
 import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
 import {usdFormatter} from "@/utils/FormatUtils";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {setParts} from "@/store/slices/PartsSlice";
+import {ActionsTableCell} from "@/components/wrappers/actionsTableCell/ActionsTableCell";
+import {EditItemPartModal} from "@/components/modals/EditItemPartModal";
 
 type ItemPartsListProps = {
     item: Item;
+    itemPartsList: ItemPart[];
     handleItemPartsCostChanged: (costOfParts: number) => void;
-    handleItemPartAdded: (itemPart: ItemPart) => void;
+    handleAddUpdateItemPart: (itemPart: ItemPart) => void;
 }
 
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
     const dispatch = useAppDispatch();
     const masterPartsList = useAppSelector((state) => state.parts.list);
 
-    const [itemPartsList, setItemPartsList] = useState<ItemPart[]>([])
+    const [itemPartsList, setItemPartsList] = useState<ItemPart[]>([]);
     const [partId, setPartId] = useState<number | undefined>(undefined);
     const [quantity, setQuantity] = useState<number>(0);
+    const [itemPartEditName, setItemPartEditName] = useState<string>('');
+    const [itemPart, setItemPart] = useState<ItemPart | undefined>(undefined);
+    const [showEditItemPartModal, setShowEditItemPartModal] = useState<boolean>(false);
+
+    useEffect(() => {
+        setItemPartsList(props.itemPartsList);
+    }, [props.itemPartsList]);
 
     useEffect(() => {
         const fetchParts = async () => {
@@ -50,20 +59,6 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         }
     }, [dispatch, masterPartsList]);
 
-    useEffect(() => {
-        const fetchItemParts = async (item: Item) => {
-            if (!item || !item.id) return;
-            try {
-                const data: ItemPart[] = await callGetItemParts(item.id);
-                setItemPartsList(data);
-            } catch (err) {
-                console.error('Error fetching parts:', err);
-            }
-        };
-
-        fetchItemParts(props.item);
-    }, [props.item, setItemPartsList]);
-
     const handleAddItemPart = () => {
         if (!itemPartsList || !partId || quantity === 0) return;
 
@@ -78,7 +73,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         setPartId(undefined);
         setQuantity(0);
 
-        props.handleItemPartAdded(toAdd);
+        props.handleAddUpdateItemPart(toAdd);
     }
 
     useEffect(() => {
@@ -95,16 +90,35 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         props.handleItemPartsCostChanged(costOfParts);
     }, [itemPartsList, props, masterPartsList]);
 
-    const getNameFor = (partId: number | undefined): string => {
-        if (!partId) return '';
-        const part = masterPartsList.find(part => part.id === partId);
-        return part ? part.name : '';
+    const getNameFor = (itemPartId: number | undefined): string => {
+        if (!itemPartId) return '';
+        const namedItemPart = masterPartsList.find(ip => ip.id === itemPartId);
+        return namedItemPart ? namedItemPart.name : '';
     }
 
     const getUnitCostFor = (partId: number | undefined): number => {
         if (!partId) return 0;
         const part = masterPartsList.find(part => part.id === partId);
         return part ? part.bulkPrice / part.bulkQuantity : 0;
+    }
+
+    const handleShowEditItemPartModal = (itemPartIdToEdit: number | undefined) => {
+        if (!itemPartIdToEdit) return;
+        const editItemPart = itemPartsList.find(itemPart => itemPart.id === itemPartIdToEdit);
+        if (!editItemPart) return;
+
+        setItemPartEditName(getNameFor(editItemPart.partId));
+        setItemPart(editItemPart);
+        setShowEditItemPartModal(true)
+    }
+
+    const handleEditItemPartResponse = (response: boolean, updatedItemPart: ItemPart) => {
+        setShowEditItemPartModal(false);
+        if (!response) return;
+
+        setItemPartEditName('');
+        setItemPart(undefined);
+        props.handleAddUpdateItemPart(updatedItemPart);
     }
 
     return (
@@ -123,6 +137,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                         <TableHeadCell>Unit Cost</TableHeadCell>
                                         <TableHeadCell>Quantity</TableHeadCell>
                                         <TableHeadCell>Product Cost</TableHeadCell>
+                                        <TableHeadCell>Actions</TableHeadCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className="divide-y">
@@ -132,6 +147,11 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                             <CurrencyTableCell value={getUnitCostFor(itemPart.partId)}/>
                                             <TableCell>{itemPart.quantity}</TableCell>
                                             <TableCell>{usdFormatter.format(itemPart.quantity * getUnitCostFor(itemPart.partId))}</TableCell>
+                                            <ActionsTableCell
+                                                id={itemPart.id}
+                                                displayName={getNameFor(itemPart.id)}
+                                                handleEdit={handleShowEditItemPartModal}
+                                            />
                                         </TableRow>
                                     ))}
                                     <TableRow className={'bg-white dark:border-gray-700 dark:bg-gray-800'}>
@@ -183,6 +203,15 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                     </div>
                 </div>
             </div>
+
+            {
+                (showEditItemPartModal && itemPart) && <EditItemPartModal
+                    itemPart={itemPart}
+                    itemPartName={itemPartEditName}
+                    showModal={showEditItemPartModal}
+                    handleResponse={handleEditItemPartResponse}
+                />
+            }
         </div>
     )
 }
