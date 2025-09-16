@@ -113,7 +113,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         setShowEditItemPartModal(true)
     }
 
-    const handleShowDeleteItemPartModal = (itemPartIdToDelete: number, response: boolean) => {
+    const handleItemPartDeleted = (itemPartIdToDelete: number, response: boolean) => {
         if (!response) return;
 
         props.handleItemPartDeleted(itemPartIdToDelete);
@@ -158,7 +158,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                                 id={itemPart.id}
                                                 displayName={getNameFor(itemPart.partId)}
                                                 handleEdit={handleShowEditItemPartModal}
-                                                handleDelete={handleShowDeleteItemPartModal}
+                                                handleDelete={handleItemPartDeleted}
                                             />
                                         </TableRow>
                                     ))}
