@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {
     callCreateItem,
-    callCreateItemParts,
+    callCreateItemParts, callDeleteItemParts,
     callGetCostOfParts,
     callGetItemParts,
     callUpdateItem, callUpdateItemParts
@@ -25,6 +25,7 @@ export const ItemDetailsPage: React.FC = () => {
     const [costOfParts, setCostOfParts] = useState<number>(0);
     const [itemPartsList, setItemPartsList] = useState<ItemPart[]>([]);
     const [newItemParts, setNewItemParts] = useState<ItemPart[]>([]);
+    const [itemPartsToDelete, setItemPartsToDelete] = useState<ItemPart[]>([])
     const [suggestedListPrice, setSuggestedListPrice] = useState(0);
 
     useEffect(() => {
@@ -66,6 +67,7 @@ export const ItemDetailsPage: React.FC = () => {
 
             await callCreateItemParts(item.id, newItemParts);
             await callUpdateItemParts(itemPartsList.filter(ip => ip.dirty));
+            await callDeleteItemParts(itemPartsToDelete);
         } else {
             if (!item.overrideSuggestedListPrice) {
                 item.listPrice = suggestedListPrice;
@@ -100,6 +102,15 @@ export const ItemDetailsPage: React.FC = () => {
         setNewItemParts([...newItemParts, itemPart]);
     }
 
+    const handleItemPartDeleted = (itemPartIdToDelete: number) => {
+        const itemPartToDelete = itemPartsList.find(ip => ip.id === itemPartIdToDelete);
+        if (!itemPartToDelete) return;
+
+        setItemPartsToDelete([...itemPartsToDelete, itemPartToDelete]);
+        const updatedPartsList = itemPartsList.filter(ip => ip.id !== itemPartIdToDelete);
+        setItemPartsList(updatedPartsList);
+    }
+
     return (
         <div>
             <div className={'m-2'}>
@@ -119,6 +130,7 @@ export const ItemDetailsPage: React.FC = () => {
                     itemPartsList={itemPartsList}
                     handleItemPartsCostChanged={handleItemPartsCostChanged}
                     handleAddUpdateItemPart={handleAddUpdateItemPart}
+                    handleItemPartDeleted={handleItemPartDeleted}
                 />
             </div>
             <div className="flex flex-row justify-between m-2">

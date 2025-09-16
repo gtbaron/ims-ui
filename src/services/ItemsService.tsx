@@ -48,3 +48,9 @@ export const callUpdateItemParts = async (itemParts: ItemPart[]) => {
         });
     }
 }
+
+export const callDeleteItemParts = async (itemPartsToDelete: ItemPart[]) => {
+    for (const itemPart of itemPartsToDelete) {
+        await api.delete(`/items/${itemPart.itemId}/parts/${itemPart.partId}`);
+    }
+}

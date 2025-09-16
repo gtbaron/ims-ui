@@ -27,6 +27,7 @@ type ItemPartsListProps = {
     itemPartsList: ItemPart[];
     handleItemPartsCostChanged: (costOfParts: number) => void;
     handleAddUpdateItemPart: (itemPart: ItemPart) => void;
+    handleItemPartDeleted: (itemPartId: number) => void;
 }
 
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
@@ -112,6 +113,12 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         setShowEditItemPartModal(true)
     }
 
+    const handleShowDeleteItemPartModal = (itemPartIdToDelete: number, response: boolean) => {
+        if (!response) return;
+
+        props.handleItemPartDeleted(itemPartIdToDelete);
+    }
+
     const handleEditItemPartResponse = (response: boolean, updatedItemPart: ItemPart) => {
         setShowEditItemPartModal(false);
         if (!response) return;
@@ -149,8 +156,9 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                             <TableCell>{usdFormatter.format(itemPart.quantity * getUnitCostFor(itemPart.partId))}</TableCell>
                                             <ActionsTableCell
                                                 id={itemPart.id}
-                                                displayName={getNameFor(itemPart.id)}
+                                                displayName={getNameFor(itemPart.partId)}
                                                 handleEdit={handleShowEditItemPartModal}
+                                                handleDelete={handleShowDeleteItemPartModal}
                                             />
                                         </TableRow>
                                     ))}
