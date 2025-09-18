@@ -96,8 +96,18 @@ export const ItemDetailsPage: React.FC = () => {
             updatedPartsList.sort((a, b) => a.partId - b.partId);
             setItemPartsList(updatedPartsList);
             return;
+        } else {
+            const newlyAddedPart = newItemParts.filter(ip => ip.partId === itemPart.partId)[0];
+            if (!newlyAddedPart) {
+                setNewItemParts([...newItemParts, itemPart]);
+            } else {
+                const updatedNewItemParts = newItemParts.filter(ip => ip.partId !== itemPart.partId);
+                updatedNewItemParts.push(itemPart);
+                setNewItemParts(updatedNewItemParts);
+            }
         }
-        setNewItemParts([...newItemParts, itemPart]);
+
+
     }
 
     const handleItemPartDeleted = (itemPartIdToDelete: number, altId?: number) => {
@@ -129,7 +139,7 @@ export const ItemDetailsPage: React.FC = () => {
             <div className={'mb-3 flex flex-row gap-3'}>
                 <ItemPartsList
                     item={item}
-                    itemPartsList={itemPartsList}
+                    itemPartsList={itemPartsList.length > 0 ? itemPartsList : newItemParts}
                     handleItemPartsCostChanged={handleItemPartsCostChanged}
                     handleAddUpdateItemPart={handleAddUpdateItemPart}
                     handleItemPartDeleted={handleItemPartDeleted}

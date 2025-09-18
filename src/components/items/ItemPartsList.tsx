@@ -107,9 +107,11 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         return part ? part.bulkPrice / part.bulkQuantity : 0;
     }
 
-    const handleShowEditItemPartModal = (itemPartIdToEdit: number | undefined) => {
-        if (!itemPartIdToEdit) return;
-        const editItemPart = itemPartsList.find(itemPart => itemPart.id === itemPartIdToEdit);
+    const handleShowEditItemPartModal = (itemPartIdToEdit: number | undefined, partId?: number) => {
+        const editItemPart = itemPartIdToEdit
+            ? itemPartsList.filter(ip => ip.id === itemPartIdToEdit)[0]
+            : itemPartsList.filter(ip => ip.partId === partId)[0];
+
         if (!editItemPart) return;
 
         setItemPartEditName(getNameFor(editItemPart.partId));

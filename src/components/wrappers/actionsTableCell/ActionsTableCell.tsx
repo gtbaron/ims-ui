@@ -4,17 +4,17 @@ import {IoOpenOutline, IoPencil, IoTrash} from "react-icons/io5";
 import './ActionsTableCell.css'
 import {ConfirmDeleteModal} from "@/components/modals/ConfirmDeleteModal";
 
-type LinkTableCellProps = {
+type ActionsTableCellProps = {
     href?: string;
     handleDelete?: (id: number, response: boolean, altId?: number) => void;
-    handleEdit?: (id: number | undefined) => void;
+    handleEdit?: (id: number | undefined, altId?: number) => void;
     id: number | undefined;
     altId?: number;
     displayName: string;
     showDelete?: boolean;
 }
 
-export const ActionsTableCell: React.FC<LinkTableCellProps> = (props: LinkTableCellProps) => {
+export const ActionsTableCell: React.FC<ActionsTableCellProps> = (props: ActionsTableCellProps) => {
     const [showDelete, setShowDelete] = useState(!!props.showDelete);
 
     const handleDelete = (response: boolean) => {
@@ -36,7 +36,7 @@ export const ActionsTableCell: React.FC<LinkTableCellProps> = (props: LinkTableC
                     }
                     {
                         props.handleEdit &&
-                            <IoPencil className="text-gray-400 hover:text-gray-100" title="Edit" onClick={() => props.handleEdit!(props.id)} />
+                            <IoPencil className="text-gray-400 hover:text-gray-100" title="Edit" onClick={() => props.handleEdit!(props.id, props.altId)} />
                     }
                     {
                         props.handleDelete &&
