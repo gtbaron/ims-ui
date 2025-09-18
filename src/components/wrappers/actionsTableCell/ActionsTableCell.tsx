@@ -6,9 +6,10 @@ import {ConfirmDeleteModal} from "@/components/modals/ConfirmDeleteModal";
 
 type LinkTableCellProps = {
     href?: string;
-    handleDelete?: (id: number, response: boolean) => void;
+    handleDelete?: (id: number, response: boolean, altId?: number) => void;
     handleEdit?: (id: number | undefined) => void;
     id: number | undefined;
+    altId?: number;
     displayName: string;
     showDelete?: boolean;
 }
@@ -18,8 +19,8 @@ export const ActionsTableCell: React.FC<LinkTableCellProps> = (props: LinkTableC
 
     const handleDelete = (response: boolean) => {
         setShowDelete(false);
-        if (props.handleDelete && props.id) {
-            props.handleDelete!(props.id, response);
+        if (props.handleDelete) {
+            props.handleDelete!(props.id ? props.id : 0, response, props.altId);
         }
     }
 

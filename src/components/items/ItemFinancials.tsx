@@ -18,8 +18,6 @@ export const ItemFinancials: React.FC<ItemFinancialsProps> = (props: ItemFinanci
     const [askPrice, setAskPrice] = useState(0);
 
     useEffect(() => {
-        if (!props.costOfParts) return;
-
         const newSuggestedListPrice = props.item.overrideSuggestedListPrice ? props.item.listPrice : props.costOfParts / .3;
         setSuggestedListPrice(props.item.overrideSuggestedListPrice ? props.item.listPrice : newSuggestedListPrice);
         setCostOfParts(props.costOfParts);

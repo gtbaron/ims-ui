@@ -69,10 +69,8 @@ export const ItemDetailsPage: React.FC = () => {
             await callUpdateItemParts(itemPartsList.filter(ip => ip.dirty));
             await callDeleteItemParts(itemPartsToDelete);
         } else {
-            if (!item.overrideSuggestedListPrice) {
-                item.listPrice = suggestedListPrice;
-            }
-            const createdItem = await callCreateItem(item);
+            const toAdd = {...item, listPrice: item.overrideSuggestedListPrice ? item.listPrice : suggestedListPrice};
+            const createdItem = await callCreateItem(toAdd);
             dispatch(addItem(createdItem));
 
             await callCreateItemParts(createdItem.id, newItemParts);
@@ -102,13 +100,17 @@ export const ItemDetailsPage: React.FC = () => {
         setNewItemParts([...newItemParts, itemPart]);
     }
 
-    const handleItemPartDeleted = (itemPartIdToDelete: number) => {
-        const itemPartToDelete = itemPartsList.find(ip => ip.id === itemPartIdToDelete);
-        if (!itemPartToDelete) return;
+    const handleItemPartDeleted = (itemPartIdToDelete: number, altId?: number) => {
+        if (itemPartIdToDelete !== 0) {
+            const itemPartToDelete = itemPartsList.find(ip => ip.id === itemPartIdToDelete);
+            if (!itemPartToDelete) return;
 
-        setItemPartsToDelete([...itemPartsToDelete, itemPartToDelete]);
-        const updatedPartsList = itemPartsList.filter(ip => ip.id !== itemPartIdToDelete);
-        setItemPartsList(updatedPartsList);
+            setItemPartsToDelete([...itemPartsToDelete, itemPartToDelete]);
+            const updatedPartsList = itemPartsList.filter(ip => ip.id !== itemPartIdToDelete);
+            setItemPartsList(updatedPartsList);
+        } else {
+            setNewItemParts(newItemParts.filter(ip => ip.partId !== altId   ));
+        }
     }
 
     return (

@@ -27,7 +27,7 @@ type ItemPartsListProps = {
     itemPartsList: ItemPart[];
     handleItemPartsCostChanged: (costOfParts: number) => void;
     handleAddUpdateItemPart: (itemPart: ItemPart) => void;
-    handleItemPartDeleted: (itemPartId: number) => void;
+    handleItemPartDeleted: (itemPartId: number, altId?:number) => void;
 }
 
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
@@ -77,8 +77,8 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         props.handleAddUpdateItemPart(toAdd);
     }
 
-    useEffect(() => {
-        const costOfParts = itemPartsList.reduce(
+    const updateCostOfParts = (partListToCompute: ItemPart[]) => {
+        const costOfParts = partListToCompute.reduce(
             (total, itemPart) => {
                 const part = masterPartsList.find(part => part.id === itemPart.partId);
                 if (part) {
@@ -89,7 +89,11 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
             0
         )
         props.handleItemPartsCostChanged(costOfParts);
-    }, [itemPartsList, props, masterPartsList]);
+    }
+
+    useEffect(() => {
+        updateCostOfParts(itemPartsList);
+    });
 
     const getNameFor = (itemPartId: number | undefined): string => {
         if (!itemPartId) return '';
@@ -113,10 +117,15 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         setShowEditItemPartModal(true)
     }
 
-    const handleItemPartDeleted = (itemPartIdToDelete: number, response: boolean) => {
+    const handleItemPartDeleted = (itemPartIdToDelete: number, response: boolean, altId?: number) => {
         if (!response) return;
 
-        props.handleItemPartDeleted(itemPartIdToDelete);
+        if (itemPartIdToDelete === 0) {
+            const updatedItemPartsList = itemPartsList.filter(ip => ip.partId !== altId);
+            setItemPartsList(updatedItemPartsList);
+            updateCostOfParts(updatedItemPartsList);
+        }
+        props.handleItemPartDeleted(itemPartIdToDelete, altId);
     }
 
     const handleEditItemPartResponse = (response: boolean, updatedItemPart: ItemPart) => {
@@ -156,6 +165,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                             <TableCell>{usdFormatter.format(itemPart.quantity * getUnitCostFor(itemPart.partId))}</TableCell>
                                             <ActionsTableCell
                                                 id={itemPart.id}
+                                                altId={itemPart.partId}
                                                 displayName={getNameFor(itemPart.partId)}
                                                 handleEdit={handleShowEditItemPartModal}
                                                 handleDelete={handleItemPartDeleted}
