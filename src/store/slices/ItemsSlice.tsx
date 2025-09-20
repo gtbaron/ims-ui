@@ -27,7 +27,7 @@ export const itemsSlice = createSlice({
     initialState,
     reducers: {
         setItemsList: (state, action: PayloadAction<Item[]>) => {
-            state.list = action.payload;
+            state.list = action.payload.sort((a, b) => a.name.localeCompare(b.name));
         },
         addItem: (state, action: PayloadAction<Item>) => {
             state.list.push(action.payload);
