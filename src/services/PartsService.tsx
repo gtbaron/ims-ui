@@ -18,6 +18,6 @@ export const callCreatePart = async (part: Part): Promise<Part> => {
 }
 
 export const callUpdatePart = async (part: Part): Promise<Part> => {
-    const response = await api.patch(`/parts/${part.id}`, part);
+    const response = await api.put(`/parts/${part.id}`, part);
     return response.data.data[0];
 }

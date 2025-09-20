@@ -19,7 +19,7 @@ export const callCreateItem = async (item: Item): Promise<Item> => {
 }
 
 export const callUpdateItem = async (item: Item): Promise<Item> => {
-    const response = await api.patch(`/items/${item.id}`, item);
+    const response = await api.put(`/items/${item.id}`, item);
     return response.data.data[0];
 }
 
@@ -34,23 +34,21 @@ export const callGetItemParts = async (itemId: number): Promise<ItemPart[]> => {
 }
 
 export const callCreateItemParts = async (itemId: number, itemParts: ItemPart[]) => {
-    for (const itemPart of itemParts) {
-        await api.post(`/items/${itemId}/parts/${itemPart.partId}`, {
-            quantity: itemPart.quantity
-        });
-    }
+    await api.post(`/items/${itemId}/parts`, {
+        data: itemParts
+    });
 }
 
-export const callUpdateItemParts = async (itemParts: ItemPart[]) => {
-    for (const itemPart of itemParts) {
-        await api.post(`/items/${itemPart.itemId}/parts/${itemPart.partId}`, {
-            quantity: itemPart.quantity
-        });
-    }
+export const callUpdateItemParts = async (itemId: number, itemParts: ItemPart[]) => {
+    await api.post(`/items/${itemId}/parts`, {
+        data: itemParts
+    });
 }
 
-export const callDeleteItemParts = async (itemPartsToDelete: ItemPart[]) => {
-    for (const itemPart of itemPartsToDelete) {
-        await api.delete(`/items/${itemPart.itemId}/parts/${itemPart.partId}`);
-    }
+export const callDeleteItemParts = async (itemId: number, itemPartsToDelete: ItemPart[]) => {
+    await api.delete(`/items/${itemId}/parts`, {
+        data: {
+            data: itemPartsToDelete
+        }
+    });
 }

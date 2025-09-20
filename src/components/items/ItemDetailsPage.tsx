@@ -66,15 +66,14 @@ export const ItemDetailsPage: React.FC = () => {
             dispatch(updateItem(updatedItem));
 
             await callCreateItemParts(item.id, newItemParts);
-            await callUpdateItemParts(itemPartsList.filter(ip => ip.dirty));
-            await callDeleteItemParts(itemPartsToDelete);
+            await callUpdateItemParts(item.id, itemPartsList.filter(ip => ip.dirty));
+            await callDeleteItemParts(item.id, itemPartsToDelete);
         } else {
             const toAdd = {...item, listPrice: item.overrideSuggestedListPrice ? item.listPrice : suggestedListPrice};
             const createdItem = await callCreateItem(toAdd);
             dispatch(addItem(createdItem));
 
             await callCreateItemParts(createdItem.id, newItemParts);
-            await callUpdateItemParts(itemPartsList.filter(ip => ip.dirty));
         }
 
         navigate('/items');
