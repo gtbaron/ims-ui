@@ -1,21 +1,27 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Part} from "@/components/parts/Part";
+import {callGetParts} from "@/services/PartsService";
+import {LoadingStatus} from "@/store/LoadingStatus";
 
 type PartsState = {
     list: Part[];
+    status: string;
+    error?: string;
 }
 
+export const fetchParts = createAsyncThunk("parts", async () => {
+    return await callGetParts();
+});
+
 const initialState: PartsState = {
-    list: []
+    list: [],
+    status: '',
 };
 
 export const partsSlice = createSlice({
     name: "parts",
     initialState,
     reducers: {
-        setParts: (state, action: PayloadAction<Part[]>) => {
-            state.list = action.payload.sort((a, b) => a.name.localeCompare(b.name));
-        },
         addPart: (state, action: PayloadAction<Part>) => {
             state.list.push(action.payload);
         },
@@ -29,8 +35,22 @@ export const partsSlice = createSlice({
             state.list = state.list.filter(part => part.id !== action.payload);
         }
     },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchParts.pending, (state) => {
+                state.status = LoadingStatus.LOADING;
+            })
+            .addCase(fetchParts.fulfilled, (state, action) => {
+                state.status = LoadingStatus.SUCCEEDED;
+                state.list = action.payload;
+            })
+            .addCase(fetchParts.rejected, (state, action) => {
+                state.status = LoadingStatus.FAILED;
+                state.error = action.error.message || "Failed to load";
+            });
+    },
 })
 
-export const { setParts, addPart, updatePart, removePart } = partsSlice.actions;
+export const { addPart, updatePart, removePart } = partsSlice.actions;
 
 export default partsSlice.reducer;

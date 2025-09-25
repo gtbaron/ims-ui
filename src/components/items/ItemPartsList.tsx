@@ -12,13 +12,10 @@ import {
     TextInput
 } from "flowbite-react";
 import {Item} from "@/components/items/Item";
-import {Part} from "@/components/parts/Part";
-import {callGetParts} from "@/services/PartsService";
 import {ItemPart} from "@/components/items/ItemPart";
 import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
 import {usdFormatter} from "@/utils/FormatUtils";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
-import {setParts} from "@/store/slices/PartsSlice";
 import {ActionsTableCell} from "@/components/wrappers/actionsTableCell/ActionsTableCell";
 import {EditItemPartModal} from "@/components/modals/EditItemPartModal";
 
@@ -44,21 +41,6 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
     useEffect(() => {
         setItemPartsList(props.itemPartsList);
     }, [props.itemPartsList]);
-
-    useEffect(() => {
-        const fetchParts = async () => {
-            try {
-                const data: Part[] = await callGetParts();
-                dispatch(setParts(data));
-            } catch (err) {
-                console.error('Error fetching parts:', err);
-            }
-        };
-
-        if (masterPartsList.length === 0) {
-            fetchParts();
-        }
-    }, [dispatch, masterPartsList]);
 
     const handleAddItemPart = () => {
         if (!itemPartsList || !partId || quantity === 0) return;

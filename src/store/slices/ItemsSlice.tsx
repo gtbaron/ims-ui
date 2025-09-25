@@ -1,7 +1,9 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {Item} from "@/components/items/Item";
 import {ItemCategory} from "@/components/items/ItemCategory";
 import {ItemStatus} from "@/components/items/ItemStatus";
+import {callGetItems} from "@/services/ItemsService";
+import {LoadingStatus} from "@/store/LoadingStatus";
 
 const defaultItem: Item = {
     id: 0,
@@ -15,20 +17,24 @@ const defaultItem: Item = {
 type ItemsState = {
     list: Item[];
     selectedItem: Item;
+    status: string;
+    error?: string;
 };
+
+export const fetchItems = createAsyncThunk("items", async () => {
+    return await callGetItems();
+});
 
 const initialState: ItemsState = {
     list: [],
-    selectedItem: defaultItem
+    selectedItem: defaultItem,
+    status: '',
 };
 
 export const itemsSlice = createSlice({
     name: "items",
     initialState,
     reducers: {
-        setItemsList: (state, action: PayloadAction<Item[]>) => {
-            state.list = action.payload.sort((a, b) => a.name.localeCompare(b.name));
-        },
         addItem: (state, action: PayloadAction<Item>) => {
             state.list.push(action.payload);
         },
@@ -44,12 +50,23 @@ export const itemsSlice = createSlice({
         setSelectedItem: (state, action: PayloadAction<Item>) => {
             state.selectedItem = action.payload;
         },
-        clearSelectedItem: (state) => {
-            state.selectedItem = defaultItem;
-        }
+    },
+    extraReducers: (builder) => {
+        builder
+            .addCase(fetchItems.pending, (state) => {
+                state.status = LoadingStatus.LOADING;
+            })
+            .addCase(fetchItems.fulfilled, (state, action) => {
+                state.status = LoadingStatus.SUCCEEDED;
+                state.list = action.payload;
+            })
+            .addCase(fetchItems.rejected, (state, action) => {
+                state.status = LoadingStatus.FAILED;
+                state.error = action.error.message || "Failed to load";
+            });
     },
 });
 
-export const { setItemsList, addItem, updateItem, removeItem, setSelectedItem, clearSelectedItem } = itemsSlice.actions;
+export const { addItem, updateItem, removeItem, setSelectedItem } = itemsSlice.actions;
 
 export default itemsSlice.reducer;
