@@ -20,8 +20,8 @@ export const ItemsInventory: React.FC = () => {
                 <h1 className='text-yellow-200'>TODO: finish implementing items inventory</h1>
             </div>
             <ul className={'text-white text-left mb-3'}>
-                {inventoryDisplayList.map(ii => (
-                    <li key={ii.id}>{ii.name} - {ii.quantity}</li>
+                {inventoryDisplayList.map(itemInventory => (
+                    <li key={itemInventory.id}>{itemInventory.id} - {itemInventory.name} - {itemInventory.quantity}</li>
                 ))}
             </ul>
         </>
