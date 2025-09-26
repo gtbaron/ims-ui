@@ -7,5 +7,6 @@ export type Item = {
     listPrice: number,
     itemCategory: ItemCategory,
     itemStatus: ItemStatus,
-    overrideSuggestedListPrice: boolean
+    overrideSuggestedListPrice: boolean,
+    quantityOnHand: number,
 }

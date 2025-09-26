@@ -5,7 +5,6 @@ import App from './App'
 import { configureStore } from '@reduxjs/toolkit';
 import partsReducer from './store/slices/PartsSlice';
 import itemsReducer from './store/slices/ItemsSlice';
-import itemsInventoryReducer from './store/slices/ItemsInventorySlice';
 import shopReducer from './store/slices/ShopSlice';
 import React from 'react';
 import {Provider} from 'react-redux';
@@ -14,7 +13,6 @@ export const store = configureStore({
     reducer: {
         parts: partsReducer,
         items: itemsReducer,
-        itemsInventory: itemsInventoryReducer,
         shop: shopReducer,
     },
 });

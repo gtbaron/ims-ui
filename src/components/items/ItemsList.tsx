@@ -30,9 +30,10 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                 <TableHead className={'sticky top-0 bg-gray-800 z-10'}>
                     <TableRow className={'bg-white dark:border-gray-700 dark:bg-gray-800'}>
                         <TableHeadCell>Name</TableHeadCell>
-                        <TableHeadCell>List Price</TableHeadCell>
                         <TableHeadCell>Category</TableHeadCell>
                         <TableHeadCell>Status</TableHeadCell>
+                        <TableHeadCell>List Price</TableHeadCell>
+                        <TableHeadCell>On Hand</TableHeadCell>
                         <TableHeadCell>Actions</TableHeadCell>
                     </TableRow>
                 </TableHead>
@@ -40,9 +41,10 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                     {itemsList.map((item) => (
                         <TableRow key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800" >
                             <TableCell>{item.name}</TableCell>
-                            <CurrencyTableCell value={item.listPrice}/>
                             <TableCell>{item.itemCategory}</TableCell>
                             <TableCell>{item.itemStatus}</TableCell>
+                            <CurrencyTableCell value={item.listPrice}/>
+                            <TableCell>{item.quantityOnHand}</TableCell>
                             <ActionsTableCell
                                 handleDelete={handleDelete}
                                 handleEdit={props.handleEdit}
@@ -52,7 +54,7 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                         </TableRow>
                     ))}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                        <TableCell colSpan={5} ></TableCell>
+                        <TableCell colSpan={6} ></TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

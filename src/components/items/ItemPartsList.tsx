@@ -15,7 +15,7 @@ import {Item} from "@/components/items/Item";
 import {ItemPart} from "@/components/items/ItemPart";
 import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
 import {usdFormatter} from "@/utils/FormatUtils";
-import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {useAppSelector} from "@/store/hooks";
 import {ActionsTableCell} from "@/components/wrappers/actionsTableCell/ActionsTableCell";
 import {EditItemPartModal} from "@/components/modals/EditItemPartModal";
 
@@ -28,7 +28,6 @@ type ItemPartsListProps = {
 }
 
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
-    const dispatch = useAppDispatch();
     const masterPartsList = useAppSelector((state) => state.parts.list);
 
     const [itemPartsList, setItemPartsList] = useState<ItemPart[]>([]);

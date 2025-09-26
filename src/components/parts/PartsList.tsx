@@ -33,6 +33,7 @@ const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                         <TableHeadCell>Bulk Price</TableHeadCell>
                         <TableHeadCell>Quantity</TableHeadCell>
                         <TableHeadCell>Unit Price</TableHeadCell>
+                        <TableHeadCell>On Hand</TableHeadCell>
                         <TableHeadCell>Actions</TableHeadCell>
                     </TableRow>
                 </TableHead>
@@ -44,6 +45,7 @@ const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                             <CurrencyTableCell value={part.bulkPrice}/>
                             <TableCell>{part.bulkQuantity}</TableCell>
                             <CurrencyTableCell value={part.bulkPrice / part.bulkQuantity}/>
+                            <TableCell>{part.quantityOnHand}</TableCell>
                             <ActionsTableCell
                                 href={part.url}
                                 handleDelete={handleDelete}
@@ -53,7 +55,7 @@ const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                         </TableRow>
                     ))}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                        <TableCell colSpan={6} ></TableCell>
+                        <TableCell colSpan={7} ></TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

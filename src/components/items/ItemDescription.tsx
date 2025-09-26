@@ -82,6 +82,20 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
                 />
                 <Label className={'dark:text-gray-400'} htmlFor="priceOverride">Override suggested list price</Label>
             </div>
+            <div className={'flex items-start'}>
+                <div>
+                    <div className={'mb-1 block'}>
+                        <span>On Hand</span>
+                    </div>
+                    <TextInput
+                        id="listPrice"
+                        value={item.quantityOnHand}
+                        onChange={(event) => handleItemValueChanged(event.target.value, 'quantityOnHand')}
+                        required
+                        sizing={'sm'}
+                    />
+                </div>
+            </div>
         </div>
     )
 }

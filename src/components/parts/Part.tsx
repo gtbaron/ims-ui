@@ -5,4 +5,5 @@ export type Part = {
     bulkPrice: number;
     bulkQuantity: number;
     url: string;
+    quantityOnHand: number;
 }

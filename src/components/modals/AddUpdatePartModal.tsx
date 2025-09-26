@@ -62,7 +62,7 @@ export const AddUpdatePartModal: React.FC<AddUpdatePartModalProps> = (props: Add
                         />
                     </div>
                     <div className={'flex flex-row justify-between'}>
-                        <div>
+                        <div className={'w-1/4'}>
                             <div className="mb-2 block">
                                 <Label htmlFor="bulkPrice">Bulk Price</Label>
                             </div>
@@ -73,7 +73,7 @@ export const AddUpdatePartModal: React.FC<AddUpdatePartModalProps> = (props: Add
                                 required
                             />
                         </div>
-                        <div>
+                        <div className={'w-1/4'}>
                             <div className="mb-2 block">
                                 <Label htmlFor="bulkQuantity">Bulk Quantity</Label>
                             </div>
@@ -81,6 +81,17 @@ export const AddUpdatePartModal: React.FC<AddUpdatePartModalProps> = (props: Add
                                 id="bulkQuantity"
                                 value={part.bulkQuantity}
                                 onChange={(event) => updatePartValue(event.target.value, 'bulkQuantity')}
+                                required
+                            />
+                        </div>
+                        <div className={'w-1/4'}>
+                            <div className="mb-2 block w">
+                                <Label htmlFor="onHand">On Hand</Label>
+                            </div>
+                            <TextInput
+                                id="onHand"
+                                value={part.quantityOnHand}
+                                onChange={(event) => updatePartValue(event.target.value, 'quantityOnHand')}
                                 required
                             />
                         </div>
