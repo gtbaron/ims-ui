@@ -2,7 +2,6 @@ import {Item} from "@/components/items/Item";
 import {ApiResponse} from "@/services/ApiResponse";
 import {api} from "@/services/ImsClient";
 import {ItemPart} from "@/components/items/ItemPart";
-import {ItemInventory} from "@/components/inventory/items/ItemInventory";
 
 export const callGetItems = async (): Promise<Item[]> => {
     const response = await api.get<ApiResponse<Item[]>>('/items');
@@ -54,7 +53,7 @@ export const callDeleteItemParts = async (itemId: number, itemPartsToDelete: Ite
     });
 }
 
-export const callGetItemsInventory = async (): Promise<ItemInventory[]> => {
-    const response = await api.get(`/items/inventory`);
-    return response.data.data;
+export const callHaveSufficientParts = async (itemId: number): Promise<boolean> => {
+    const response = await api.get(`/items/${itemId}/have-sufficient-parts`);
+    return response.data.data && response.data.data.length ? response.data.data[0] : false;
 }

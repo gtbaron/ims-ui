@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useMemo} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "flowbite-react";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {Item} from "@/components/items/Item";
@@ -6,6 +6,7 @@ import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
 import {ActionsTableCell} from "@/components/wrappers/actionsTableCell/ActionsTableCell";
 import {removeItem} from "@/store/slices/ItemsSlice";
 import {callDeleteItem} from "@/services/ItemsService";
+import {HiCheckCircle} from "react-icons/hi";
 
 export type ItemsListProps = {
     handleEdit: (partId: number | undefined) => void;

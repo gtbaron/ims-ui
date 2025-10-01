@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {
     callCreateItem,
-    callCreateItemParts, callDeleteItemParts,
+    callCreateItemParts,
+    callDeleteItemParts,
     callGetCostOfParts,
     callGetItemParts,
-    callUpdateItem, callUpdateItemParts
+    callHaveSufficientParts,
+    callUpdateItem,
+    callUpdateItemParts
 } from "@/services/ItemsService";
 import {addItem, updateItem} from "@/store/slices/ItemsSlice";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
@@ -15,6 +18,7 @@ import {ItemFinancials} from "@/components/items/ItemFinancials";
 import {ItemDescription} from "@/components/items/ItemDescription";
 import {ItemPartsList} from "@/components/items/ItemPartsList";
 import {ItemPart} from "@/components/items/ItemPart";
+import {HiCheckCircle, HiXCircle} from "react-icons/hi";
 
 export const ItemDetailsPage: React.FC = () => {
     const stateItem: Item = useAppSelector((state) => state.items.selectedItem);
@@ -27,6 +31,7 @@ export const ItemDetailsPage: React.FC = () => {
     const [newItemParts, setNewItemParts] = useState<ItemPart[]>([]);
     const [itemPartsToDelete, setItemPartsToDelete] = useState<ItemPart[]>([])
     const [suggestedListPrice, setSuggestedListPrice] = useState(0);
+    const [canBuild, setCanBuild] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchCostOfParts = async () => {
@@ -54,6 +59,20 @@ export const ItemDetailsPage: React.FC = () => {
 
         fetchItemParts(item);
     }, [item, setItemPartsList]);
+
+    useEffect(() => {
+        const fetchCanBuild = async (item: Item) => {
+            if (!item || !item.id) return;
+            try {
+                const data: boolean = await callHaveSufficientParts(item.id);
+                setCanBuild(data);
+            } catch (err) {
+                console.error('Error fetching parts:', err);
+            }
+        };
+
+        fetchCanBuild(item);
+    }, [item]);
 
     const updateItemValue = (value: string | number | boolean, key: string) => {
         setItem({...item, [key]: value});
@@ -105,8 +124,6 @@ export const ItemDetailsPage: React.FC = () => {
                 setNewItemParts(updatedNewItemParts);
             }
         }
-
-
     }
 
     const handleItemPartDeleted = (itemPartIdToDelete: number, altId?: number) => {
@@ -124,8 +141,10 @@ export const ItemDetailsPage: React.FC = () => {
 
     return (
         <div>
-            <div className={'m-2'}>
-                <h1 className='text-white'>{item.id ? item.name : 'Add Item'}</h1>
+            <div className={'m-2 flex flex-row items-start'}>
+                <h1 className='text-white inline'>{item.id ? item.name : 'Add Item'}</h1>
+                { canBuild && <HiCheckCircle className={'text-green-400 text-2xl ml-3 mt-2 mb-1'} /> }
+                { !canBuild && <HiXCircle className={'text-red-500 text-2xl ml-3 mt-2 mb-1'} /> }
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
                 <ItemDescription item={item} handleItemValueChanged={updateItemValue} updateItemValue={updateItemValue} />
