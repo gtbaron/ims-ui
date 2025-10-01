@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from "react";
 import {
     callCreateItem,
-    callCreateItemParts, callDeleteItemParts,
+    callCreateItemParts,
+    callDeleteItemParts,
     callGetCostOfParts,
     callGetItemParts,
-    callUpdateItem, callUpdateItemParts
+    callHaveSufficientParts,
+    callUpdateItem,
+    callUpdateItemParts
 } from "@/services/ItemsService";
 import {addItem, updateItem} from "@/store/slices/ItemsSlice";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
@@ -15,6 +18,7 @@ import {ItemFinancials} from "@/components/items/ItemFinancials";
 import {ItemDescription} from "@/components/items/ItemDescription";
 import {ItemPartsList} from "@/components/items/ItemPartsList";
 import {ItemPart} from "@/components/items/ItemPart";
+import {HiCheckCircle, HiXCircle} from "react-icons/hi";
 
 export const ItemDetailsPage: React.FC = () => {
     const stateItem: Item = useAppSelector((state) => state.items.selectedItem);
@@ -105,8 +109,6 @@ export const ItemDetailsPage: React.FC = () => {
                 setNewItemParts(updatedNewItemParts);
             }
         }
-
-
     }
 
     const handleItemPartDeleted = (itemPartIdToDelete: number, altId?: number) => {
@@ -124,8 +126,8 @@ export const ItemDetailsPage: React.FC = () => {
 
     return (
         <div>
-            <div className={'m-2'}>
-                <h1 className='text-white'>{item.id ? item.name : 'Add Item'}</h1>
+            <div className={'m-2 flex flex-row items-start'}>
+                <h1 className='text-white inline'>{item.id ? item.name : 'Add Item'}</h1>
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
                 <ItemDescription item={item} handleItemValueChanged={updateItemValue} updateItemValue={updateItemValue} />

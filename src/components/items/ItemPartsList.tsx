@@ -18,6 +18,8 @@ import {usdFormatter} from "@/utils/FormatUtils";
 import {useAppSelector} from "@/store/hooks";
 import {ActionsTableCell} from "@/components/wrappers/actionsTableCell/ActionsTableCell";
 import {EditItemPartModal} from "@/components/modals/EditItemPartModal";
+import {callHaveSufficientParts} from "@/services/ItemsService";
+import {HiCheckCircle, HiXCircle} from "react-icons/hi";
 
 type ItemPartsListProps = {
     item: Item;
@@ -36,10 +38,25 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
     const [itemPartEditName, setItemPartEditName] = useState<string>('');
     const [itemPart, setItemPart] = useState<ItemPart | undefined>(undefined);
     const [showEditItemPartModal, setShowEditItemPartModal] = useState<boolean>(false);
+    const [canBuild, setCanBuild] = useState<boolean>(false);
 
     useEffect(() => {
         setItemPartsList(props.itemPartsList);
     }, [props.itemPartsList]);
+
+    useEffect(() => {
+        const fetchCanBuild = async (item: Item) => {
+            if (!item || !item.id) return;
+            try {
+                const data: boolean = await callHaveSufficientParts(item.id);
+                setCanBuild(data);
+            } catch (err) {
+                console.error('Error fetching parts:', err);
+            }
+        };
+
+        fetchCanBuild(props.item);
+    }, [props.item]);
 
     const handleAddItemPart = () => {
         if (!itemPartsList || !partId || quantity === 0) return;
@@ -124,8 +141,10 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         <div className={'bg-gray-800 rounded-xl space-y-6 text-left p-6 m-2 w-full'}>
             {
                 (itemPartsList && itemPartsList.length > 0) && <>
-                    <div className={'text-white text-left mb-2'}>
+                    <div className={'text-white m-2 flex flex-row items-start'}>
                         <h2>Parts List</h2>
+                        { canBuild && <HiCheckCircle className={'text-green-400 text-2xl ml-2'} /> }
+                        { !canBuild && <HiXCircle className={'text-red-500 text-2xl ml-2'} /> }
                     </div>
                     <div className={'max-h-60 overflow-y-auto rounded-md'}>
                         <div className={'border border-gray-700 rounded-xl'}>
