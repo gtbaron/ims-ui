@@ -31,7 +31,6 @@ export const ItemDetailsPage: React.FC = () => {
     const [newItemParts, setNewItemParts] = useState<ItemPart[]>([]);
     const [itemPartsToDelete, setItemPartsToDelete] = useState<ItemPart[]>([])
     const [suggestedListPrice, setSuggestedListPrice] = useState(0);
-    const [canBuild, setCanBuild] = useState<boolean>(false);
 
     useEffect(() => {
         const fetchCostOfParts = async () => {
@@ -59,20 +58,6 @@ export const ItemDetailsPage: React.FC = () => {
 
         fetchItemParts(item);
     }, [item, setItemPartsList]);
-
-    useEffect(() => {
-        const fetchCanBuild = async (item: Item) => {
-            if (!item || !item.id) return;
-            try {
-                const data: boolean = await callHaveSufficientParts(item.id);
-                setCanBuild(data);
-            } catch (err) {
-                console.error('Error fetching parts:', err);
-            }
-        };
-
-        fetchCanBuild(item);
-    }, [item]);
 
     const updateItemValue = (value: string | number | boolean, key: string) => {
         setItem({...item, [key]: value});
@@ -143,8 +128,6 @@ export const ItemDetailsPage: React.FC = () => {
         <div>
             <div className={'m-2 flex flex-row items-start'}>
                 <h1 className='text-white inline'>{item.id ? item.name : 'Add Item'}</h1>
-                { canBuild && <HiCheckCircle className={'text-green-400 text-2xl ml-3 mt-2 mb-1'} /> }
-                { !canBuild && <HiXCircle className={'text-red-500 text-2xl ml-3 mt-2 mb-1'} /> }
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
                 <ItemDescription item={item} handleItemValueChanged={updateItemValue} updateItemValue={updateItemValue} />
