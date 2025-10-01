@@ -137,6 +137,11 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         props.handleAddUpdateItemPart(updatedItemPart);
     }
 
+    const haveEnoughParts = (partId: number, quantity: number) => {
+        const part = masterPartsList.filter(part => part.id === partId)[0];
+        return part && part.quantityOnHand >= quantity;
+    }
+
     return (
         <div className={'bg-gray-800 rounded-xl space-y-6 text-left p-6 m-2 w-full'}>
             {
@@ -159,8 +164,9 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                     </TableRow>
                                 </TableHead>
                                 <TableBody className="divide-y">
-                                    {itemPartsList.map((itemPart) => (
-                                        <TableRow key={`${itemPart.partId}_${itemPart.quantity}`} className="bg-white dark:border-gray-700 dark:bg-gray-800" >
+                                    {itemPartsList.map((itemPart) => {
+                                        const textColor = haveEnoughParts(itemPart.partId, itemPart.quantity) ? '' : 'text-red-500';
+                                        return <TableRow key={`${itemPart.partId}_${itemPart.quantity}`} className={`dark:border-gray-700 dark:bg-gray-800 ${textColor}`} >
                                             <TableCell>{getNameFor(itemPart.partId)}</TableCell>
                                             <CurrencyTableCell value={getUnitCostFor(itemPart.partId)}/>
                                             <TableCell>{itemPart.quantity}</TableCell>
@@ -173,7 +179,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                                 handleDelete={handleItemPartDeleted}
                                             />
                                         </TableRow>
-                                    ))}
+                                    })}
                                     <TableRow className={'bg-white dark:border-gray-700 dark:bg-gray-800'}>
                                         <TableCell colSpan={5} ></TableCell>
                                     </TableRow>
