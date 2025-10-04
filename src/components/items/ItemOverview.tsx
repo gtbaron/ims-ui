@@ -10,7 +10,7 @@ type ItemDescriptionProps = {
     updateItemValue: (value: string | number | boolean, key: string) => void;
 }
 
-export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescriptionProps) => {
+export const ItemOverview: React.FC<ItemDescriptionProps> = (props: ItemDescriptionProps) => {
     const nameInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -25,7 +25,7 @@ export const ItemDescription: React.FC<ItemDescriptionProps> = (props: ItemDescr
     return (
         <div className={'text-left w-1/2 m-2 bg-gray-800 text-gray-400 rounded-xl space-y-6 p-6'}>
             <div className="text-white text-left mb-3">
-                <h2>Item Description</h2>
+                <h2>Item Overview</h2>
             </div>
             <div>
                 <div className={'mb-1 block'}>

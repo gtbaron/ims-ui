@@ -15,7 +15,7 @@ import {Item} from "@/components/items/Item";
 import {useNavigate} from "react-router-dom";
 import {Button} from "flowbite-react";
 import {ItemFinancials} from "@/components/items/ItemFinancials";
-import {ItemDescription} from "@/components/items/ItemDescription";
+import {ItemOverview} from "@/components/items/ItemOverview";
 import {ItemPartsList} from "@/components/items/ItemPartsList";
 import {ItemPart} from "@/components/items/ItemPart";
 import {HiCheckCircle, HiXCircle} from "react-icons/hi";
@@ -130,7 +130,7 @@ export const ItemDetailsPage: React.FC = () => {
                 <h1 className='text-white inline'>{item.id ? item.name : 'Add Item'}</h1>
             </div>
             <div className={'mb-3 flex flex-row gap-3'}>
-                <ItemDescription item={item} handleItemValueChanged={updateItemValue} updateItemValue={updateItemValue} />
+                <ItemOverview item={item} handleItemValueChanged={updateItemValue} updateItemValue={updateItemValue} />
                 <ItemFinancials
                     item={item}
                     costOfParts={costOfParts}

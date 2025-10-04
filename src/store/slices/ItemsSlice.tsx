@@ -11,7 +11,8 @@ const defaultItem: Item = {
     listPrice: 0,
     itemCategory: ItemCategory.HOME_DECOR,
     itemStatus: ItemStatus.DRAFT,
-    overrideSuggestedListPrice: false
+    overrideSuggestedListPrice: false,
+    quantityOnHand: 0,
 };
 
 type ItemsState = {
@@ -22,7 +23,8 @@ type ItemsState = {
 };
 
 export const fetchItems = createAsyncThunk("items", async () => {
-    return await callGetItems();
+    const items = await callGetItems();
+    return items.sort((a: Item, b: Item) => a.name.localeCompare(b.name));
 });
 
 const initialState: ItemsState = {

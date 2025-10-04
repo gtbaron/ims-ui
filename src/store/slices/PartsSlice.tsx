@@ -10,7 +10,8 @@ type PartsState = {
 }
 
 export const fetchParts = createAsyncThunk("parts", async () => {
-    return await callGetParts();
+    const parts = await callGetParts();
+    return parts.sort((a: Part, b: Part) => a.name.localeCompare(b.name));
 });
 
 const initialState: PartsState = {
