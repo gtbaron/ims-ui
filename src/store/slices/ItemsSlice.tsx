@@ -6,7 +6,6 @@ import {callGetItems} from "@/services/ItemsService";
 import {LoadingStatus} from "@/store/LoadingStatus";
 
 const defaultItem: Item = {
-    id: 0,
     name: '',
     listPrice: 0,
     itemCategory: ItemCategory.HOME_DECOR,

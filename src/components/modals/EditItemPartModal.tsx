@@ -10,11 +10,13 @@ type EditItemPartModalProps = {
 }
 
 export const EditItemPartModal: React.FC<EditItemPartModalProps> = (props: EditItemPartModalProps) => {
-    const [quantity, setQuantity] = useState(props.itemPart.quantity);
+    const [quantity, setQuantity] = useState<string>(props.itemPart.quantity.toString());
     const quantityInputRef = useRef<HTMLInputElement>(null);
 
     const handleCloseModal = (response: boolean) => {
-        props.handleResponse(response, {...props.itemPart, quantity});
+        const parsedQuantity = parseFloat(quantity);
+        const finalQuantity = isNaN(parsedQuantity) ? props.itemPart.quantity : parsedQuantity;
+        props.handleResponse(response, {...props.itemPart, quantity: finalQuantity});
     }
 
     return (
@@ -26,12 +28,15 @@ export const EditItemPartModal: React.FC<EditItemPartModalProps> = (props: EditI
                 <div className="space-y-6">
                     <div>
                         <div className="mb-2 block">
-                            <Label htmlFor="name">Quantity</Label>
+                            <Label htmlFor="quantity">Quantity</Label>
                         </div>
                         <TextInput
                             id="quantity"
+                            type="number"
+                            step="any"
+                            inputMode="decimal"
                             value={quantity}
-                            onChange={(event) => setQuantity(Number(event.target.value))}
+                            onChange={(event) => setQuantity(event.target.value)}
                             required
                             ref={quantityInputRef}
                         />

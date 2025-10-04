@@ -5,7 +5,6 @@ import {
     callDeleteItemParts,
     callGetCostOfParts,
     callGetItemParts,
-    callHaveSufficientParts,
     callUpdateItem,
     callUpdateItemParts
 } from "@/services/ItemsService";
@@ -18,7 +17,6 @@ import {ItemFinancials} from "@/components/items/ItemFinancials";
 import {ItemOverview} from "@/components/items/ItemOverview";
 import {ItemPartsList} from "@/components/items/ItemPartsList";
 import {ItemPart} from "@/components/items/ItemPart";
-import {HiCheckCircle, HiXCircle} from "react-icons/hi";
 
 export const ItemDetailsPage: React.FC = () => {
     const stateItem: Item = useAppSelector((state) => state.items.selectedItem);
@@ -75,8 +73,10 @@ export const ItemDetailsPage: React.FC = () => {
         } else {
             const toAdd = {...item, listPrice: item.overrideSuggestedListPrice ? item.listPrice : suggestedListPrice};
             const createdItem = await callCreateItem(toAdd);
-            dispatch(addItem(createdItem));
 
+            if (!createdItem.id) return;
+
+            dispatch(addItem(createdItem));
             await callCreateItemParts(createdItem.id, newItemParts);
         }
 

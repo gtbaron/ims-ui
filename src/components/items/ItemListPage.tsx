@@ -9,7 +9,6 @@ import {ItemStatus} from "@/components/items/ItemStatus";
 import {useNavigate} from "react-router-dom";
 
 const defaultItem: Item = {
-    id: 0,
     name: '',
     listPrice: 0,
     itemCategory: ItemCategory.HOME_DECOR,
