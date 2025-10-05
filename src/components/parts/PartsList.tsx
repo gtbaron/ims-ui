@@ -38,8 +38,9 @@ const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                     </TableRow>
                 </TableHead>
                 <TableBody className="divide-y">
-                    {partsList.map((part) => (
-                        <TableRow key={part.id} className="bg-white dark:border-gray-700 dark:bg-gray-800" >
+                    {partsList.map((part) => {
+                        const textColor = part.quantityOnHand > 0 ? '' : 'text-red-500';
+                        return <TableRow key={part.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${textColor}`}>
                             <TableCell>{part.name}</TableCell>
                             <TableCell>{part.provider}</TableCell>
                             <CurrencyTableCell value={part.bulkPrice}/>
@@ -51,9 +52,9 @@ const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                                 handleDelete={handleDelete}
                                 handleEdit={props.handleEdit}
                                 id={part.id}
-                                displayName={part.name} />
+                                displayName={part.name}/>
                         </TableRow>
-                    ))}
+                    })}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                         <TableCell colSpan={7} ></TableCell>
                     </TableRow>

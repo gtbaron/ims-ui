@@ -90,6 +90,9 @@ export const AddUpdatePartModal: React.FC<AddUpdatePartModalProps> = (props: Add
                             </div>
                             <TextInput
                                 id="onHand"
+                                type="number"
+                                step="any"
+                                inputMode="decimal"
                                 value={part.quantityOnHand}
                                 onChange={(event) => updatePartValue(event.target.value, 'quantityOnHand')}
                                 required

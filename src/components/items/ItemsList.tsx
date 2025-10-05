@@ -38,8 +38,9 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                     </TableRow>
                 </TableHead>
                 <TableBody className="divide-y">
-                    {itemsList.map((item) => (
-                        <TableRow key={item.id} className="bg-white dark:border-gray-700 dark:bg-gray-800" >
+                    {itemsList.map((item) => {
+                        const textColor = item.quantityOnHand > 0 ? '' : 'text-red-500';
+                        return <TableRow key={item.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${textColor}`}>
                             <TableCell>{item.name}</TableCell>
                             <TableCell>{item.itemCategory}</TableCell>
                             <TableCell>{item.itemStatus}</TableCell>
@@ -52,7 +53,7 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                                 displayName={item.name}
                             />
                         </TableRow>
-                    ))}
+                    })}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                         <TableCell colSpan={6} ></TableCell>
                     </TableRow>
