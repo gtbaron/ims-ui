@@ -29,10 +29,14 @@ type ItemPartsListProps = {
     handleItemPartDeleted: (itemPartId: number, altId?:number) => void;
 }
 
+interface DisplayItemPart extends ItemPart {
+    name: string,
+}
+
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
     const masterPartsList = useAppSelector((state) => state.parts.list);
 
-    const [itemPartsList, setItemPartsList] = useState<ItemPart[]>([]);
+    const [itemPartsList, setItemPartsList] = useState<DisplayItemPart[]>([]);
     const [partId, setPartId] = useState<number | undefined>(undefined);
     const [quantity, setQuantity] = useState<number>(0);
     const [itemPartEditName, setItemPartEditName] = useState<string>('');
@@ -41,7 +45,14 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
     const [canBuild, setCanBuild] = useState<boolean>(false);
 
     useEffect(() => {
-        setItemPartsList(props.itemPartsList);
+        const displayItemPartsList = props.itemPartsList.map((itemPart: ItemPart) => {
+            const part = masterPartsList.filter(part => part.id === itemPart.partId)[0];
+            return {
+                ...itemPart,
+                name: part ? part.name : ''
+            }
+        });
+        setItemPartsList(displayItemPartsList.sort((a, b) => a.name.localeCompare(b.name)));
     }, [props.itemPartsList]);
 
     useEffect(() => {
@@ -68,7 +79,14 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         };
 
         const updatedItemPartsList = [...itemPartsList, toAdd];
-        setItemPartsList(updatedItemPartsList);
+        const displayItemPartsList = updatedItemPartsList.map((itemPart: ItemPart) => {
+            const part = masterPartsList.filter(part => part.id === itemPart.partId)[0];
+            return {
+                ...itemPart,
+                name: part ? part.name : ''
+            }
+        });
+        setItemPartsList(displayItemPartsList.sort((a, b) => a.name.localeCompare(b.name)));
         setPartId(undefined);
         setQuantity(0);
 
@@ -174,7 +192,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                             <ActionsTableCell
                                                 id={itemPart.id}
                                                 altId={itemPart.partId}
-                                                displayName={getNameFor(itemPart.partId)}
+                                                displayName={itemPart.name}
                                                 handleEdit={handleShowEditItemPartModal}
                                                 handleDelete={handleItemPartDeleted}
                                             />
