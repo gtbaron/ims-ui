@@ -12,7 +12,8 @@ const defaultPart: Part = {
     provider: '',
     bulkPrice: 0,
     bulkQuantity: 0,
-    url: ''
+    url: '',
+    quantityOnHand: 0,
 };
 
 export const PartsListPage = () => {
