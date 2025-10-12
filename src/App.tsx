@@ -20,7 +20,7 @@ export default function App() {
     }, [dispatch]);
 
     return (
-        <main className="min-h-screen">
+        <main className={'max-h-screen'}>
             <Router>
                 <div id={'main'}>
                     <div id={'left'}>
