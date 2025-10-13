@@ -16,7 +16,7 @@ import {ItemPart} from "@/components/items/ItemPart";
 import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
 import {usdFormatter} from "@/utils/FormatUtils";
 import {useAppSelector} from "@/store/hooks";
-import {ActionsTableCell} from "@/components/wrappers/actionsTableCell/ActionsTableCell";
+import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell/ActionsTableCell";
 import {EditItemPartModal} from "@/components/modals/EditItemPartModal";
 import {callHaveSufficientParts} from "@/services/ItemsService";
 import {HiCheckCircle, HiXCircle} from "react-icons/hi";
