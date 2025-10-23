@@ -11,6 +11,7 @@ import {useEffect} from "react";
 import {fetchItems} from "@/store/slices/ItemsSlice";
 import {fetchParts} from "@/store/slices/PartsSlice";
 import {PickListsPage} from "@/components/pickLists/PickListsPage";
+import {fetchPickLists} from "@/store/slices/PickListSlice";
 
 export default function App() {
     const dispatch = useAppDispatch();
@@ -18,6 +19,7 @@ export default function App() {
     useEffect(() => {
         dispatch(fetchItems());
         dispatch(fetchParts());
+        dispatch(fetchPickLists());
     }, [dispatch]);
 
     return (
