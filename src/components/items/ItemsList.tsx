@@ -34,18 +34,21 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                         <TableHeadCell>Status</TableHeadCell>
                         <TableHeadCell>List Price</TableHeadCell>
                         <TableHeadCell>On Hand</TableHeadCell>
+                        <TableHeadCell>Desired Quantity</TableHeadCell>
                         <TableHeadCell>Actions</TableHeadCell>
                     </TableRow>
                 </TableHead>
                 <TableBody className="divide-y">
                     {itemsList.map((item) => {
-                        const textColor = item.quantityOnHand > 0 ? (item.quantityOnHand === 1 ? 'text-yellow-400' : '') : 'text-red-500';
+                        // const textColor = item.quantityOnHand > 0 ? (item.quantityOnHand === 1 ? 'text-yellow-400' : '') : 'text-red-500';
+                        const textColor = item.quantityOnHand < item.desiredQuantity ? (item.quantityOnHand > item.desiredQuantity / 2 ? 'text-yellow-400' : 'text-red-500') : '';
                         return <TableRow key={item.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${textColor}`}>
                             <TableCell>{item.name}</TableCell>
                             <TableCell>{item.itemCategory}</TableCell>
                             <TableCell>{item.itemStatus}</TableCell>
                             <CurrencyTableCell value={item.listPrice}/>
                             <TableCell>{item.quantityOnHand}</TableCell>
+                            <TableCell>{item.desiredQuantity}</TableCell>
                             <ActionsTableCell
                                 handleDelete={handleDelete}
                                 handleEdit={props.handleEdit}

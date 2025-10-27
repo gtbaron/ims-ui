@@ -9,4 +9,5 @@ export type Item = {
     itemStatus: ItemStatus,
     overrideSuggestedListPrice: boolean,
     quantityOnHand: number,
+    desiredQuantity: number,
 }

@@ -14,7 +14,8 @@ const defaultItem: Item = {
     itemCategory: ItemCategory.HOME_DECOR,
     itemStatus: ItemStatus.DRAFT,
     overrideSuggestedListPrice: false,
-    quantityOnHand: 0
+    quantityOnHand: 0,
+    desiredQuantity: 1,
 };
 
 export const ItemListPage: React.FC = () => {
