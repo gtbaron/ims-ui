@@ -25,6 +25,10 @@ export const PickListsList: React.FC = () => {
         setDisplayPickList(displayList);
     }, [items, pickLists]);
 
+    const handlePickListPullResponse = (id: number | undefined, response: boolean) => {
+
+    }
+
     return (
         <div className={'text-white max-h-screen overflow-y-auto rounded-md'}>
             <Table striped>
@@ -46,7 +50,9 @@ export const PickListsList: React.FC = () => {
                                 // handleDelete={handleDelete}
                                 // handleEdit={props.handleEdit}
                                 id={pickList.id}
-                                displayName={pickList.name}/>
+                                displayName={pickList.name}
+                                handleAlt={handlePickListPullResponse}
+                            />
                         </TableRow>
                     })}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">

@@ -1,6 +1,6 @@
 import {TableCell} from "flowbite-react";
 import React, {useState} from "react";
-import {IoOpenOutline, IoPencil, IoTrash} from "react-icons/io5";
+import {IoClipboardOutline, IoOpenOutline, IoPencil, IoTrash} from "react-icons/io5";
 import './ActionsTableCell.css'
 import {ConfirmDeleteModal} from "@/components/modals/ConfirmDeleteModal";
 
@@ -12,6 +12,8 @@ type ActionsTableCellProps = {
     altId?: number;
     displayName: string;
     showDelete?: boolean;
+    handleAlt?: (id: number | undefined, response: boolean) => void;
+    handleAltMessage?: string;
 }
 
 export const ActionsTableCell: React.FC<ActionsTableCellProps> = (props: ActionsTableCellProps) => {
@@ -31,17 +33,21 @@ export const ActionsTableCell: React.FC<ActionsTableCellProps> = (props: Actions
                     {
                         props.href &&
                             <a href={props.href} target="_blank" rel="noreferrer">
-                                <IoOpenOutline className="text-gray-400 hover:text-gray-100" title="Open in new tab"/>
+                                <IoOpenOutline className={'text-gray-400 hover:text-gray-100 cursor-pointer'} title="Open in new tab"/>
                             </a>
                     }
                     {
+                        props.handleAlt &&
+                            <IoClipboardOutline className={'text-gray-400 hover:text-gray-100 cursor-pointer'} title={`${props.handleAltMessage ? props.handleAltMessage : ''}`} onClick={() => props.handleAlt!(props.id, true)} />
+                    }
+                    {
                         props.handleEdit &&
-                            <IoPencil className="text-gray-400 hover:text-gray-100" title="Edit" onClick={() => props.handleEdit!(props.id, props.altId)} />
+                            <IoPencil className={'text-gray-400 hover:text-gray-100 cursor-pointer'} title="Edit" onClick={() => props.handleEdit!(props.id, props.altId)} />
                     }
                     {
                         props.handleDelete &&
                             <IoTrash
-                                className="text-red-700 hover:text-red-400"
+                                className={'text-red-700 hover:text-red-400 cursor-pointer'}
                                 onClick={(e) => {
                                         e.stopPropagation();
                                         setShowDelete(true);
