@@ -35,7 +35,7 @@ export const MissingPartsModal: React.FC<MissingPartsModalProps> = (props: Missi
                             {props.missingParts.map((part) => {
                                 return <TableRow key={part.name} className={`bg-white dark:border-gray-700 dark:bg-gray-800`}>
                                     <TableCell>{part.name}</TableCell>
-                                    <TableCell>{part.quantityOnHand}</TableCell>
+                                    <TableCell className={'text-center'}>{part.quantityOnHand}</TableCell>
                                 </TableRow>
                             })}
                             <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
