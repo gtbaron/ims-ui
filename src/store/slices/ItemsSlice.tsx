@@ -12,6 +12,7 @@ const defaultItem: Item = {
     itemStatus: ItemStatus.DRAFT,
     overrideSuggestedListPrice: false,
     quantityOnHand: 0,
+    desiredQuantity: 1,
 };
 
 type ItemsState = {

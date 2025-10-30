@@ -88,9 +88,21 @@ export const ItemOverview: React.FC<ItemDescriptionProps> = (props: ItemDescript
                         <span className={`${item.quantityOnHand === 0 ? 'text-red-500' : (item.quantityOnHand === 1 ? 'text-yellow-400' : '')}`}>On Hand</span>
                     </div>
                     <TextInput
-                        id="listPrice"
+                        id="quantityOnHand"
                         value={item.quantityOnHand}
                         onChange={(event) => handleItemValueChanged(event.target.value, 'quantityOnHand')}
+                        required
+                        sizing={'sm'}
+                    />
+                </div>
+                <div className={'ml-3'}>
+                    <div className={'mb-1 block'}>
+                        <span>Desired Quantity</span>
+                    </div>
+                    <TextInput
+                        id="desiredQuantity"
+                        value={item.desiredQuantity}
+                        onChange={(event) => handleItemValueChanged(event.target.value, 'desiredQuantity')}
                         required
                         sizing={'sm'}
                     />

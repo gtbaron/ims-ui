@@ -2,7 +2,7 @@ import React from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "flowbite-react";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
-import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell/ActionsTableCell";
+import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
 import {callDeletePart} from "@/services/PartsService";
 import {removePart} from "@/store/slices/PartsSlice";
 
@@ -50,6 +50,7 @@ const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                             <ActionsTableCell
                                 href={part.url}
                                 handleDelete={handleDelete}
+                                canEdit={true}
                                 handleEdit={props.handleEdit}
                                 id={part.id}
                                 displayName={part.name}/>

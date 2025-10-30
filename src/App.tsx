@@ -2,7 +2,7 @@ import './App.css'
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import PartsListPage from "./components/parts/PartsListPage";
 import {Sidebar, SidebarItem, SidebarItemGroup, SidebarItems} from "flowbite-react";
-import {HiShoppingBag} from "react-icons/hi";
+import {HiClipboardList, HiShoppingBag} from "react-icons/hi";
 import {HiWrench} from "react-icons/hi2";
 import {ItemListPage} from "@/components/items/ItemListPage";
 import {ItemDetailsPage} from "@/components/items/ItemDetailsPage";
@@ -10,6 +10,8 @@ import {useAppDispatch} from "@/store/hooks";
 import {useEffect} from "react";
 import {fetchItems} from "@/store/slices/ItemsSlice";
 import {fetchParts} from "@/store/slices/PartsSlice";
+import {PickListsPage} from "@/components/pickLists/PickListsPage";
+import {fetchPickLists} from "@/store/slices/PickListSlice";
 
 export default function App() {
     const dispatch = useAppDispatch();
@@ -17,6 +19,7 @@ export default function App() {
     useEffect(() => {
         dispatch(fetchItems());
         dispatch(fetchParts());
+        dispatch(fetchPickLists());
     }, [dispatch]);
 
     return (
@@ -33,6 +36,9 @@ export default function App() {
                                     <SidebarItem href="/parts" icon={HiWrench}>
                                         Parts
                                     </SidebarItem>
+                                    <SidebarItem href='/pick-lists' icon={HiClipboardList}>
+                                        Pick Lists
+                                    </SidebarItem>
                                 </SidebarItemGroup>
                             </SidebarItems>
                         </Sidebar>
@@ -42,6 +48,7 @@ export default function App() {
                             <Route path="/parts" element={<PartsListPage />} />
                             <Route path="/items" element={<ItemListPage />} />
                             <Route path="/item-details" element={<ItemDetailsPage />} />
+                            <Route path='/pick-lists' element={<PickListsPage />} />
                         </Routes>
                     </div>
                 </div>

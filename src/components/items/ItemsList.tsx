@@ -3,7 +3,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "f
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {Item} from "@/components/items/Item";
 import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
-import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell/ActionsTableCell";
+import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
 import {removeItem} from "@/store/slices/ItemsSlice";
 import {callDeleteItem} from "@/services/ItemsService";
 
@@ -34,20 +34,23 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                         <TableHeadCell>Status</TableHeadCell>
                         <TableHeadCell>List Price</TableHeadCell>
                         <TableHeadCell>On Hand</TableHeadCell>
+                        <TableHeadCell>Desired Quantity</TableHeadCell>
                         <TableHeadCell>Actions</TableHeadCell>
                     </TableRow>
                 </TableHead>
                 <TableBody className="divide-y">
                     {itemsList.map((item) => {
-                        const textColor = item.quantityOnHand > 0 ? (item.quantityOnHand === 1 ? 'text-yellow-400' : '') : 'text-red-500';
+                        const textColor = item.quantityOnHand < item.desiredQuantity ? (item.quantityOnHand > item.desiredQuantity / 2 ? 'text-yellow-400' : 'text-red-500') : '';
                         return <TableRow key={item.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${textColor}`}>
                             <TableCell>{item.name}</TableCell>
                             <TableCell>{item.itemCategory}</TableCell>
                             <TableCell>{item.itemStatus}</TableCell>
                             <CurrencyTableCell value={item.listPrice}/>
                             <TableCell>{item.quantityOnHand}</TableCell>
+                            <TableCell>{item.desiredQuantity}</TableCell>
                             <ActionsTableCell
                                 handleDelete={handleDelete}
+                                canEdit={true}
                                 handleEdit={props.handleEdit}
                                 id={item.id}
                                 displayName={item.name}
