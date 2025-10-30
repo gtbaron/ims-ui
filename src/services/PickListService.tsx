@@ -21,3 +21,8 @@ export const callDeletePickList = async (id: number): Promise<boolean> => {
     const response = await api.delete(`/pick-lists/${id}`);
     return response.data.success;
 }
+
+export const callPullPickList = async (id: number): Promise<PickList> => {
+    const response = await api.post(`/pick-lists/${id}/pull`);
+    return response.data.data[0];
+}

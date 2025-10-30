@@ -50,6 +50,7 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                             <TableCell>{item.desiredQuantity}</TableCell>
                             <ActionsTableCell
                                 handleDelete={handleDelete}
+                                canEdit={true}
                                 handleEdit={props.handleEdit}
                                 id={item.id}
                                 displayName={item.name}

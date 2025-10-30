@@ -50,6 +50,7 @@ const   PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                             <ActionsTableCell
                                 href={part.url}
                                 handleDelete={handleDelete}
+                                canEdit={true}
                                 handleEdit={props.handleEdit}
                                 id={part.id}
                                 displayName={part.name}/>

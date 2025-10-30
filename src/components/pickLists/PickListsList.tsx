@@ -4,8 +4,8 @@ import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {PickList, PickListStatus} from "@/components/pickLists/PickList";
 import {Item} from "@/components/items/Item";
-import {callDeletePickList} from "@/services/PickListService";
-import {removePickList} from "@/store/slices/PickListSlice";
+import {callDeletePickList, callPullPickList} from "@/services/PickListService";
+import {removePickList, updatePickList} from "@/store/slices/PickListSlice";
 
 type DisplayPickList = PickList & {
     name: string,
@@ -41,9 +41,10 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
         }
     }
 
-    const handlePickListPullResponse = (id: number | undefined, response: boolean) => {
-        if (!response) return;
-        alert(`Pick List ${id} pulled from inventory. Please update the item's quantity on hand.`);
+    const handlePickListPullResponse = async (id: number | undefined, response: boolean) => {
+        if (!response || !id) return;
+        const existing = await callPullPickList(id);
+        dispatch(updatePickList(existing));
     }
 
     return (
@@ -65,12 +66,14 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                             <TableCell>{pickList.pickListStatus}</TableCell>
                             <ActionsTableCell
                                 handleDelete={handleDelete}
+                                canEdit={pickList.pickListStatus !== PickListStatus.PICKED}
                                 handleEdit={props.handleEdit}
                                 id={pickList.id}
                                 displayName={pickList.name}
                                 handleAlt={handlePickListPullResponse}
-                                canHandleAlt={pickList.pickListStatus !== PickListStatus.INSUFFICIENT_PARTS}
+                                canHandleAlt={pickList.pickListStatus === PickListStatus.DRAFT}
                                 handleAltMessage={'Pull parts from inventory'}
+                                altTitle={'Are you sure you want to pull parts for:'}
                             />
                         </TableRow>
                     })}
