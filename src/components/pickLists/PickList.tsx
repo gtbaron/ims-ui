@@ -1,8 +1,8 @@
 export enum PickListStatus {
-    DRAFT,
-    FULFILLED,
-    INSUFFICIENT_PARTS,
-    PICKED
+    DRAFT = 'DRAFT',
+    FULFILLED = 'FULFILLED',
+    INSUFFICIENT_PARTS = 'INSUFFICIENT_PARTS',
+    PICKED = 'PICKED'
 };
 
 export type PickList = {

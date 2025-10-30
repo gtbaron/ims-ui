@@ -1,18 +1,25 @@
 import React, {useEffect, useState} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "flowbite-react";
 import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell/ActionsTableCell";
-import {useAppSelector} from "@/store/hooks";
-import {PickList} from "@/components/pickLists/PickList";
+import {useAppDispatch, useAppSelector} from "@/store/hooks";
+import {PickList, PickListStatus} from "@/components/pickLists/PickList";
 import {Item} from "@/components/items/Item";
+import {callDeletePickList} from "@/services/PickListService";
+import {removePickList} from "@/store/slices/PickListSlice";
 
 type DisplayPickList = PickList & {
     name: string,
 }
 
-export const PickListsList: React.FC = () => {
+type PickListsListProps = {
+    handleEdit: (partId: number | undefined) => void;
+}
+
+export const PickListsList: React.FC<PickListsListProps> = (props: PickListsListProps) => {
     const pickLists: PickList[] = useAppSelector((state) => state.pickLists.list);
     const items: Item[] = useAppSelector((state) => state.items.list);
     const [displayPickList, setDisplayPickList] = useState<DisplayPickList[]>([]);
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         const displayList = pickLists.map(pickList => {
@@ -24,6 +31,15 @@ export const PickListsList: React.FC = () => {
         });
         setDisplayPickList(displayList);
     }, [items, pickLists]);
+
+    const handleDelete = async (id: number, response: boolean) => {
+        if (response) {
+            const success = await callDeletePickList(id);
+            if (success) {
+                dispatch(removePickList(id))
+            }
+        }
+    }
 
     const handlePickListPullResponse = (id: number | undefined, response: boolean) => {
 
@@ -47,11 +63,13 @@ export const PickListsList: React.FC = () => {
                             <TableCell>{pickList.quantity}</TableCell>
                             <TableCell>{pickList.pickListStatus}</TableCell>
                             <ActionsTableCell
-                                // handleDelete={handleDelete}
-                                // handleEdit={props.handleEdit}
+                                handleDelete={handleDelete}
+                                handleEdit={props.handleEdit}
                                 id={pickList.id}
                                 displayName={pickList.name}
                                 handleAlt={handlePickListPullResponse}
+                                canHandleAlt={pickList.pickListStatus !== PickListStatus.INSUFFICIENT_PARTS}
+                                handleAltMessage={'Pull parts from inventory'}
                             />
                         </TableRow>
                     })}

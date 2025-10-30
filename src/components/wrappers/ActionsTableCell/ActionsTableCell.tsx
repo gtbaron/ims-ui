@@ -13,6 +13,7 @@ type ActionsTableCellProps = {
     displayName: string;
     showDelete?: boolean;
     handleAlt?: (id: number | undefined, response: boolean) => void;
+    canHandleAlt?: boolean;
     handleAltMessage?: string;
 }
 
@@ -38,7 +39,14 @@ export const ActionsTableCell: React.FC<ActionsTableCellProps> = (props: Actions
                     }
                     {
                         props.handleAlt &&
-                            <IoClipboardOutline className={'text-gray-400 hover:text-gray-100 cursor-pointer'} title={`${props.handleAltMessage ? props.handleAltMessage : ''}`} onClick={() => props.handleAlt!(props.id, true)} />
+                            <IoClipboardOutline className={`text-gray-400 ${props.canHandleAlt ? 'cursor-pointer hover:text-gray-100' : ''}`}
+                                title={`${props.handleAltMessage ? props.handleAltMessage : ''}`}
+                                onClick={() => {
+                                    if (props.canHandleAlt) {
+                                        props.handleAlt!(props.id, true)
+                                    }
+                                }}
+                            />
                     }
                     {
                         props.handleEdit &&

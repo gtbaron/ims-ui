@@ -40,7 +40,6 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                 </TableHead>
                 <TableBody className="divide-y">
                     {itemsList.map((item) => {
-                        // const textColor = item.quantityOnHand > 0 ? (item.quantityOnHand === 1 ? 'text-yellow-400' : '') : 'text-red-500';
                         const textColor = item.quantityOnHand < item.desiredQuantity ? (item.quantityOnHand > item.desiredQuantity / 2 ? 'text-yellow-400' : 'text-red-500') : '';
                         return <TableRow key={item.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${textColor}`}>
                             <TableCell>{item.name}</TableCell>
