@@ -1,7 +1,6 @@
 import {TableCell} from "flowbite-react";
 import React, {useState} from "react";
 import {IoClipboardOutline, IoOpenOutline, IoPencil, IoTrash} from "react-icons/io5";
-import './ActionsTableCell.css'
 import {ConfirmDeleteModal} from "@/components/modals/ConfirmDeleteModal";
 
 type ActionsTableCellProps = {
@@ -30,7 +29,7 @@ export const ActionsTableCell: React.FC<ActionsTableCellProps> = (props: Actions
     return (
         <>
             <TableCell>
-                <div className={'actions-table-cell'}>
+                <div className={'flex flex-row justify-start gap-2'}>
                     {
                         props.href &&
                             <a href={props.href} target="_blank" rel="noreferrer">

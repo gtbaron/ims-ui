@@ -3,7 +3,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "f
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {Item} from "@/components/items/Item";
 import {CurrencyTableCell} from "@/components/wrappers/CurrencyTableCell";
-import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell/ActionsTableCell";
+import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
 import {removeItem} from "@/store/slices/ItemsSlice";
 import {callDeleteItem} from "@/services/ItemsService";
 

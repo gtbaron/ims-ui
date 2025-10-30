@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "flowbite-react";
-import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell/ActionsTableCell";
+import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {PickList, PickListStatus} from "@/components/pickLists/PickList";
 import {Item} from "@/components/items/Item";
@@ -42,7 +42,8 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
     }
 
     const handlePickListPullResponse = (id: number | undefined, response: boolean) => {
-
+        if (!response) return;
+        alert(`Pick List ${id} pulled from inventory. Please update the item's quantity on hand.`);
     }
 
     return (
