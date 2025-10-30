@@ -103,7 +103,7 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                                 canEdit={pickList.pickListStatus !== PickListStatus.PICKED}
                                 handleEdit={props.handleEdit}
                                 id={pickList.id}
-                                displayName={pickList.name}
+                                displayName={`${pickList.quantity} ${pickList.name}${pickList.quantity === 1 ? '' : 's'}`}
                                 handleAlt={handlePickListPullResponse}
                                 canHandleAlt={pickList.pickListStatus === PickListStatus.DRAFT}
                                 handleAltMessage={'Pull parts from inventory'}
