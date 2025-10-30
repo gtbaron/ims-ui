@@ -6,9 +6,16 @@ import {PickList, PickListStatus} from "@/components/pickLists/PickList";
 import {Item} from "@/components/items/Item";
 import {callDeletePickList, callPullPickList} from "@/services/PickListService";
 import {removePickList, updatePickList} from "@/store/slices/PickListSlice";
+import {Part} from "@/components/parts/Part";
+import {MissingPartsModal} from "@/components/modals/MissingPartsModal";
 
 type DisplayPickList = PickList & {
     name: string,
+}
+
+export type DisplayMissingPart = {
+    name: string,
+    quantityOnHand: number,
 }
 
 type PickListsListProps = {
@@ -18,7 +25,10 @@ type PickListsListProps = {
 export const PickListsList: React.FC<PickListsListProps> = (props: PickListsListProps) => {
     const pickLists: PickList[] = useAppSelector((state) => state.pickLists.list);
     const items: Item[] = useAppSelector((state) => state.items.list);
+    const parts: Part[] = useAppSelector((state) => state.parts.list);
     const [displayPickList, setDisplayPickList] = useState<DisplayPickList[]>([]);
+    const [missingParts, setMissingParts] = useState<DisplayMissingPart[]>([])
+    const [showMissingParts, setShowMissingParts] = useState<boolean>(false);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -47,6 +57,21 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
         dispatch(updatePickList(existing));
     }
 
+    const handleShowMissingParts = (id: number) => {
+        const toShow: PickList = pickLists.filter(pickList => pickList.id === id)[0];
+        if (!toShow) return;
+
+        const missingItemParts: DisplayMissingPart[] = toShow.missingParts.map(id => {
+            const part: Part = parts.filter(p => p.id === id)[0];
+            return {
+                name: part.name,
+                quantityOnHand: part.quantityOnHand,
+            }
+        });
+        setMissingParts(missingItemParts);
+        setShowMissingParts(true);
+    }
+
     return (
         <div className={'text-white max-h-screen overflow-y-auto rounded-md'}>
             <Table striped>
@@ -60,10 +85,19 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                 </TableHead>
                 <TableBody className="divide-y">
                     {displayPickList.map((pickList) => {
-                        return <TableRow key={pickList.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800`}>
+                        const textColor = pickList.pickListStatus === PickListStatus.INSUFFICIENT_PARTS ? 'text-red-500' : '';
+                        return <TableRow key={pickList.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${textColor}`}>
                             <TableCell>{pickList.name}</TableCell>
                             <TableCell>{pickList.quantity}</TableCell>
-                            <TableCell>{pickList.pickListStatus}</TableCell>
+                            <TableCell className={`${ pickList.pickListStatus === PickListStatus.INSUFFICIENT_PARTS ? 'cursor-pointer' : ''}`}
+                                onClick={() => {
+                                    if (pickList.pickListStatus === PickListStatus.INSUFFICIENT_PARTS) {
+                                        handleShowMissingParts(pickList.id || 0);
+                                    }
+                                }}
+                            >
+                                {pickList.pickListStatus}
+                            </TableCell>
                             <ActionsTableCell
                                 handleDelete={handleDelete}
                                 canEdit={pickList.pickListStatus !== PickListStatus.PICKED}
@@ -82,6 +116,9 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                     </TableRow>
                 </TableBody>
             </Table>
+            {
+                showMissingParts && <MissingPartsModal missingParts={missingParts} showDialog={showMissingParts} handleClose={() => setShowMissingParts(false)} />
+            }
         </div>
     )
 }

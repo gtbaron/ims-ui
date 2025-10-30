@@ -10,4 +10,5 @@ export type PickList = {
     itemId?: number;
     quantity: number;
     pickListStatus: PickListStatus;
+    missingParts: number[];
 };
