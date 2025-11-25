@@ -58,7 +58,7 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                         </TableRow>
                     })}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                        <TableCell colSpan={6} ></TableCell>
+                        <TableCell colSpan={7} ></TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

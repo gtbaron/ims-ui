@@ -194,6 +194,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                                 altId={itemPart.partId}
                                                 displayName={itemPart.name}
                                                 handleEdit={handleShowEditItemPartModal}
+                                                canEdit={true}
                                                 handleDelete={handleItemPartDeleted}
                                             />
                                         </TableRow>

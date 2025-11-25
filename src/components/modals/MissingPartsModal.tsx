@@ -28,7 +28,7 @@ export const MissingPartsModal: React.FC<MissingPartsModalProps> = (props: Missi
                         <TableHead className={'sticky top-0 bg-gray-800 z-10'}>
                             <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                 <TableHeadCell>Item</TableHeadCell>
-                                <TableHeadCell>Quantity Available</TableHeadCell>
+                                <TableHeadCell>On Hand</TableHeadCell>
                             </TableRow>
                         </TableHead>
                         <TableBody className="divide-y">

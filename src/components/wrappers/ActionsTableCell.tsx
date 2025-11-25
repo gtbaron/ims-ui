@@ -15,6 +15,7 @@ type ActionsTableCellProps = {
     handleAlt?: (id: number | undefined, response: boolean) => void;
     canHandleAlt?: boolean;
     altTitle?: string;
+    altToolTip?: string;
     handleAltMessage?: string;
     showAlt?: boolean;
 }
@@ -50,7 +51,7 @@ export const ActionsTableCell: React.FC<ActionsTableCellProps> = (props: Actions
                     {
                         props.handleAlt &&
                             <IoClipboardOutline className={`text-gray-400 ${props.canHandleAlt ? 'cursor-pointer hover:text-gray-100' : ''}`}
-                                title={`${props.altTitle ? props.altTitle : ''}`}
+                                title={`${props.altToolTip ? props.altToolTip : ''}`}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     if (props.canHandleAlt) {

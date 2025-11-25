@@ -108,6 +108,7 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                                 canHandleAlt={pickList.pickListStatus === PickListStatus.DRAFT}
                                 handleAltMessage={'Pull parts from inventory'}
                                 altTitle={'Are you sure you want to pull parts for:'}
+                                altToolTip={'Pull parts from inventory.'}
                             />
                         </TableRow>
                     })}
