@@ -4,7 +4,7 @@ import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {PickList, PickListStatus} from "@/components/pickLists/PickList";
 import {Item} from "@/components/items/Item";
-import {callDeletePickList, callPullPickList} from "@/services/PickListService";
+import {callDeletePickList, callPullPickList, callReturnPickList} from "@/services/PickListService";
 import {removePickList, updatePickList} from "@/store/slices/PickListSlice";
 import {Part} from "@/components/parts/Part";
 import {MissingPartsModal} from "@/components/modals/MissingPartsModal";
@@ -51,9 +51,15 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
         }
     }
 
-    const handlePickListPullResponse = async (id: number | undefined, response: boolean) => {
+    const handlePullPickListResponse = async (id: number | undefined, response: boolean) => {
         if (!response || !id) return;
         const existing = await callPullPickList(id);
+        dispatch(updatePickList(existing));
+    }
+
+    const handleReturnPickListResponse = async (id: number | undefined, response: boolean) => {
+        if (!response || !id) return;
+        const existing = await callReturnPickList(id);
         dispatch(updatePickList(existing));
     }
 
@@ -86,6 +92,12 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                 <TableBody className="divide-y">
                     {displayPickList.map((pickList) => {
                         const textColor = pickList.pickListStatus === PickListStatus.INSUFFICIENT_PARTS ? 'text-red-500' : '';
+                        const pickListAction = {
+                            canHandleAlt: pickList.pickListStatus === PickListStatus.DRAFT || pickList.pickListStatus === PickListStatus.PICKED,
+                            handleAlt: pickList.pickListStatus === PickListStatus.DRAFT ? handlePullPickListResponse : handleReturnPickListResponse,
+                            altTitle: `Are you sure you want to ${pickList.pickListStatus === PickListStatus.DRAFT ? 'pull' : 'return'} parts for:`,
+                            altToolTip: pickList.pickListStatus === PickListStatus.DRAFT ? 'Pull parts from inventory.' : 'Return parts to inventory.',
+                        };
                         return <TableRow key={pickList.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${textColor}`}>
                             <TableCell>{pickList.name}</TableCell>
                             <TableCell>{pickList.quantity}</TableCell>
@@ -104,11 +116,10 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                                 handleEdit={props.handleEdit}
                                 id={pickList.id}
                                 displayName={`${pickList.quantity} ${pickList.name}${pickList.quantity === 1 ? '' : 's'}`}
-                                handleAlt={handlePickListPullResponse}
-                                canHandleAlt={pickList.pickListStatus === PickListStatus.DRAFT}
-                                handleAltMessage={'Pull parts from inventory'}
-                                altTitle={'Are you sure you want to pull parts for:'}
-                                altToolTip={'Pull parts from inventory.'}
+                                canHandleAlt={pickListAction.canHandleAlt}
+                                handleAlt={pickListAction.handleAlt}
+                                altTitle={pickListAction.altTitle}
+                                altToolTip={pickListAction.altToolTip}
                             />
                         </TableRow>
                     })}

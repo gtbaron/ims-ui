@@ -26,3 +26,8 @@ export const callPullPickList = async (id: number): Promise<PickList> => {
     const response = await api.post(`/pick-lists/${id}/pull`);
     return response.data.data[0];
 }
+
+export const callReturnPickList = async (id: number): Promise<PickList> => {
+    const response = await api.post(`/pick-lists/${id}/return`);
+    return response.data.data[0];
+}

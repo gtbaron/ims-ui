@@ -16,7 +16,6 @@ type ActionsTableCellProps = {
     canHandleAlt?: boolean;
     altTitle?: string;
     altToolTip?: string;
-    handleAltMessage?: string;
     showAlt?: boolean;
 }
 
