@@ -53,7 +53,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
             }
         });
         setItemPartsList(displayItemPartsList.sort((a, b) => a.name.localeCompare(b.name)));
-    }, [props.itemPartsList]);
+    }, [props.itemPartsList, masterPartsList]);
 
     useEffect(() => {
         const fetchCanBuild = async (item: Item) => {

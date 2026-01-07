@@ -12,6 +12,7 @@ const defaultPickList: PickList = {
     itemId: undefined,
     quantity: 0,
     pickListStatus: PickListStatus.DRAFT,
+    missingParts: [],
 };
 
 export const PickListsPage: React.FC = () => {
