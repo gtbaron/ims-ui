@@ -7,6 +7,7 @@ import partsReducer from './store/slices/PartsSlice';
 import itemsReducer from './store/slices/ItemsSlice';
 import pickListsReducer from './store/slices/PickListSlice';
 import shopReducer from './store/slices/ShopSlice';
+import listingsReducer from './store/slices/ListingsSlice';
 import {Provider} from 'react-redux';
 
 export const store = configureStore({
@@ -15,6 +16,7 @@ export const store = configureStore({
         items: itemsReducer,
         pickLists: pickListsReducer,
         shop: shopReducer,
+        listings: listingsReducer,
     },
 });
 

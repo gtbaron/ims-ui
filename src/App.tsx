@@ -4,8 +4,10 @@ import PartsListPage from "./components/parts/PartsListPage";
 import {Sidebar, SidebarItem, SidebarItemGroup, SidebarItems} from "flowbite-react";
 import {HiClipboardList, HiShoppingBag} from "react-icons/hi";
 import {HiWrench} from "react-icons/hi2";
+import {IoStorefront} from "react-icons/io5";
 import {ItemListPage} from "@/components/items/ItemListPage";
 import {ItemDetailsPage} from "@/components/items/ItemDetailsPage";
+import {ListingsPage} from "@/components/listings/ListingsPage";
 import {useAppDispatch} from "@/store/hooks";
 import {useEffect} from "react";
 import {fetchItems} from "@/store/slices/ItemsSlice";
@@ -39,6 +41,9 @@ export default function App() {
                                     <SidebarItem href='/pick-lists' icon={HiClipboardList}>
                                         Pick Lists
                                     </SidebarItem>
+                                    <SidebarItem href='/listings' icon={IoStorefront}>
+                                        Listings
+                                    </SidebarItem>
                                 </SidebarItemGroup>
                             </SidebarItems>
                         </Sidebar>
@@ -49,6 +54,7 @@ export default function App() {
                             <Route path="/items" element={<ItemListPage />} />
                             <Route path="/item-details" element={<ItemDetailsPage />} />
                             <Route path='/pick-lists' element={<PickListsPage />} />
+                            <Route path='/listings' element={<ListingsPage />} />
                         </Routes>
                     </div>
                 </div>
