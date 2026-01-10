@@ -33,10 +33,14 @@ export const ListingsList: React.FC<ListingsListProps> = (props: ListingsListPro
                             overrideSuggestedListPrice: listing.overrideSuggestedListPrice,
                         });
 
+                        const textColor = listing.costOfParts > 0 && financials.marginPercent < 130
+                            ? (financials.marginPercent < 120 ? 'text-red-500' : 'text-yellow-400')
+                            : '';
+
                         return (
                             <TableRow
                                 key={listing.itemId}
-                                className={'bg-white dark:border-gray-700 dark:bg-gray-800 cursor-pointer hover:bg-gray-700'}
+                                className={`bg-white dark:border-gray-700 dark:bg-gray-800 cursor-pointer hover:bg-gray-700 ${textColor}`}
                                 onClick={() => props.handleRowClick(listing.itemId)}
                             >
                                 <TableCell>{listing.name}</TableCell>
