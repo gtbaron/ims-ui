@@ -38,6 +38,7 @@ type MultiAddRow = {
     partId: number | undefined;
     quantity: number;
     error?: string;
+    searchTerm?: string;
 }
 
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
@@ -91,13 +92,19 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
 
     const handleRowPartChange = (rowId: string, newPartId: number) => {
         setMultiAddRows(multiAddRows.map(row =>
-            row.id === rowId ? { ...row, partId: newPartId, error: undefined } : row
+            row.id === rowId ? { ...row, partId: newPartId, error: undefined, searchTerm: '' } : row
         ));
     };
 
     const handleRowQuantityChange = (rowId: string, newQuantity: number) => {
         setMultiAddRows(multiAddRows.map(row =>
             row.id === rowId ? { ...row, quantity: newQuantity, error: undefined } : row
+        ));
+    };
+
+    const handleRowSearchChange = (rowId: string, searchTerm: string) => {
+        setMultiAddRows(multiAddRows.map(row =>
+            row.id === rowId ? { ...row, searchTerm } : row
         ));
     };
 
@@ -292,9 +299,9 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                     <Table>
                         <TableHead>
                             <TableRow className="bg-gray-700">
-                                <TableHeadCell className={'w-3/5'}>Part</TableHeadCell>
-                                <TableHeadCell className={'w-1/5'}>Quantity</TableHeadCell>
-                                <TableHeadCell className={'w-1/5'}>Actions</TableHeadCell>
+                                <TableHeadCell>Part</TableHeadCell>
+                                <TableHeadCell className={'w-32'}>Quantity</TableHeadCell>
+                                <TableHeadCell className={'w-24'}>Actions</TableHeadCell>
                             </TableRow>
                         </TableHead>
                         <TableBody className="divide-y">
@@ -304,26 +311,57 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                     className={`dark:border-gray-700 dark:bg-gray-800 ${row.error ? 'bg-red-900 bg-opacity-20' : ''}`}
                                 >
                                     <TableCell>
-                                        <Dropdown
-                                            id={`part-${row.id}`}
-                                            size={'sm'}
-                                            label={
-                                                row.partId
-                                                    ? masterPartsList.find(p => p.id === row.partId)?.name || 'Select part...'
-                                                    : 'Select part...'
-                                            }
-                                        >
-                                            <div className={'max-h-96 overflow-y-auto'}>
-                                                {masterPartsList.map((part) => (
-                                                    <DropdownItem
-                                                        key={part.id}
-                                                        onClick={() => handleRowPartChange(row.id, part.id!)}
-                                                    >
-                                                        {part.name}
-                                                    </DropdownItem>
-                                                ))}
+                                        <div className="part-dropdown">
+                                            <Dropdown
+                                                id={`part-${row.id}`}
+                                                size={'sm'}
+                                                label={
+                                                    row.partId
+                                                        ? masterPartsList.find(p => p.id === row.partId)?.name || 'Select part...'
+                                                        : 'Select part...'
+                                                }
+                                            >
+                                            <div
+                                                className={'p-2 border-b border-gray-600 w-64'}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <TextInput
+                                                    id={`search-${row.id}`}
+                                                    type="text"
+                                                    placeholder="Search parts..."
+                                                    value={row.searchTerm || ''}
+                                                    onChange={(e) => handleRowSearchChange(row.id, e.target.value)}
+                                                    sizing={'sm'}
+                                                    autoComplete="off"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    onKeyDown={(e) => e.stopPropagation()}
+                                                />
+                                            </div>
+                                            <div className={'max-h-96 overflow-y-auto w-64'}>
+                                                {masterPartsList
+                                                    .filter(part =>
+                                                        !row.searchTerm ||
+                                                        part.name.toLowerCase().includes(row.searchTerm.toLowerCase())
+                                                    )
+                                                    .map((part) => (
+                                                        <DropdownItem
+                                                            key={part.id}
+                                                            onClick={() => handleRowPartChange(row.id, part.id!)}
+                                                        >
+                                                            {part.name}
+                                                        </DropdownItem>
+                                                    ))}
+                                                {masterPartsList.filter(part =>
+                                                    !row.searchTerm ||
+                                                    part.name.toLowerCase().includes(row.searchTerm.toLowerCase())
+                                                ).length === 0 && (
+                                                    <div className={'p-2 text-gray-400 text-center w-64'}>
+                                                        No parts found
+                                                    </div>
+                                                )}
                                             </div>
                                         </Dropdown>
+                                        </div>
                                         {row.error && (
                                             <span className={'text-red-400 text-xs mt-1'}>{row.error}</span>
                                         )}

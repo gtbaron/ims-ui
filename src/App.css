@@ -66,3 +66,9 @@ body {
 nav {
     text-align: left;
 }
+
+.part-dropdown button {
+    width: 300px !important;
+    max-width: 300px !important;
+    justify-content: flex-start !important;
+}
