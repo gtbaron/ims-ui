@@ -19,7 +19,7 @@ import {useAppSelector} from "@/store/hooks";
 import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
 import {EditItemPartModal} from "@/components/modals/EditItemPartModal";
 import {callHaveSufficientParts} from "@/services/ItemsService";
-import {HiCheckCircle, HiXCircle} from "react-icons/hi";
+import {HiCheckCircle, HiXCircle, HiPlus, HiX} from "react-icons/hi";
 
 type ItemPartsListProps = {
     item: Item;
@@ -33,12 +33,20 @@ interface DisplayItemPart extends ItemPart {
     name: string,
 }
 
+type MultiAddRow = {
+    id: string;
+    partId: number | undefined;
+    quantity: number;
+    error?: string;
+}
+
 export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsListProps) => {
     const masterPartsList = useAppSelector((state) => state.parts.list);
 
     const [itemPartsList, setItemPartsList] = useState<DisplayItemPart[]>([]);
-    const [partId, setPartId] = useState<number | undefined>(undefined);
-    const [quantity, setQuantity] = useState<number>(0);
+    const [multiAddRows, setMultiAddRows] = useState<MultiAddRow[]>([
+        { id: crypto.randomUUID(), partId: undefined, quantity: 0 }
+    ]);
     const [itemPartEditName, setItemPartEditName] = useState<string>('');
     const [itemPart, setItemPart] = useState<ItemPart | undefined>(undefined);
     const [showEditItemPartModal, setShowEditItemPartModal] = useState<boolean>(false);
@@ -69,29 +77,95 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         fetchCanBuild(props.item);
     }, [props.item]);
 
-    const handleAddItemPart = () => {
-        if (!itemPartsList || !partId || quantity === 0) return;
+    const handleAddRow = () => {
+        setMultiAddRows([
+            ...multiAddRows,
+            { id: crypto.randomUUID(), partId: undefined, quantity: 0 }
+        ]);
+    };
 
-        const toAdd: ItemPart = {
-            itemId: props.item.id as number,
-            partId: partId,
-            quantity: quantity
-        };
+    const handleRemoveRow = (rowId: string) => {
+        if (multiAddRows.length === 1) return;
+        setMultiAddRows(multiAddRows.filter(row => row.id !== rowId));
+    };
 
-        const updatedItemPartsList = [...itemPartsList, toAdd];
-        const displayItemPartsList = updatedItemPartsList.map((itemPart: ItemPart) => {
-            const part = masterPartsList.filter(part => part.id === itemPart.partId)[0];
-            return {
-                ...itemPart,
-                name: part ? part.name : ''
+    const handleRowPartChange = (rowId: string, newPartId: number) => {
+        setMultiAddRows(multiAddRows.map(row =>
+            row.id === rowId ? { ...row, partId: newPartId, error: undefined } : row
+        ));
+    };
+
+    const handleRowQuantityChange = (rowId: string, newQuantity: number) => {
+        setMultiAddRows(multiAddRows.map(row =>
+            row.id === rowId ? { ...row, quantity: newQuantity, error: undefined } : row
+        ));
+    };
+
+    const validateRows = (): boolean => {
+        let isValid = true;
+        const updatedRows = multiAddRows.map(row => {
+            if (!row.partId) {
+                isValid = false;
+                return { ...row, error: 'Please select a part' };
+            }
+            if (!row.quantity || row.quantity <= 0) {
+                isValid = false;
+                return { ...row, error: 'Quantity must be greater than 0' };
+            }
+            return { ...row, error: undefined };
+        });
+
+        setMultiAddRows(updatedRows);
+        return isValid;
+    };
+
+    const mergeRowsByPart = (rows: MultiAddRow[]): ItemPart[] => {
+        const partQuantityMap = new Map<number, number>();
+
+        rows.forEach(row => {
+            if (row.partId && row.quantity > 0) {
+                const existing = partQuantityMap.get(row.partId) || 0;
+                partQuantityMap.set(row.partId, existing + row.quantity);
             }
         });
-        setItemPartsList(displayItemPartsList.sort((a, b) => a.name.localeCompare(b.name)));
-        setPartId(undefined);
-        setQuantity(0);
 
-        props.handleAddUpdateItemPart(toAdd);
-    }
+        return Array.from(partQuantityMap.entries()).map(([partId, quantity]) => ({
+            itemId: props.item.id as number,
+            partId,
+            quantity
+        }));
+    };
+
+    const handleAddAllParts = () => {
+        if (!validateRows()) return;
+
+        const validRows = multiAddRows.filter(
+            row => row.partId && row.quantity > 0
+        );
+
+        if (validRows.length === 0) return;
+
+        const mergedParts = mergeRowsByPart(validRows);
+
+        mergedParts.forEach(newPart => {
+            const existingNewPart = props.itemPartsList.find(
+                ip => !ip.id && ip.partId === newPart.partId
+            );
+
+            if (existingNewPart) {
+                props.handleAddUpdateItemPart({
+                    ...existingNewPart,
+                    quantity: existingNewPart.quantity + newPart.quantity
+                });
+            } else {
+                props.handleAddUpdateItemPart(newPart);
+            }
+        });
+
+        setMultiAddRows([
+            { id: crypto.randomUUID(), partId: undefined, quantity: 0 }
+        ]);
+    };
 
     const updateCostOfParts = (partListToCompute: ItemPart[]) => {
         const costOfParts = partListToCompute.reduce(
@@ -209,43 +283,96 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                 </>
             }
 
-            <div className={'text-gray-400 text-left mb-2 flex flex-row justify-between'}>
-                <div className={'w-3/5'}>
-                    <div className={'mb-1 block'}>
-                        <span>Part</span>
-                    </div>
-                    <Dropdown
-                        id={'partsList'}
-                        size={'sm'}
-                        label={partId === 0 ? 'Select part...' : masterPartsList.find(part => part.id === partId)?.name || 'Select part...'}
-                    >
-                        <div className={'max-h-60 overflow-y-auto'}>
-                            {masterPartsList.map((part) => (
-                                <DropdownItem key={part.id} onClick={() => setPartId(part.id)} >{part.name}</DropdownItem>
+            <div className={'text-gray-400 text-left mb-2'}>
+                <div className={'mb-3'}>
+                    <h3 className={'text-white mb-2'}>Add Parts</h3>
+                </div>
+
+                <div className={'border border-gray-700 rounded-lg mb-3'}>
+                    <Table>
+                        <TableHead>
+                            <TableRow className="bg-gray-700">
+                                <TableHeadCell className={'w-3/5'}>Part</TableHeadCell>
+                                <TableHeadCell className={'w-1/5'}>Quantity</TableHeadCell>
+                                <TableHeadCell className={'w-1/5'}>Actions</TableHeadCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody className="divide-y">
+                            {multiAddRows.map((row, index) => (
+                                <TableRow
+                                    key={row.id}
+                                    className={`dark:border-gray-700 dark:bg-gray-800 ${row.error ? 'bg-red-900 bg-opacity-20' : ''}`}
+                                >
+                                    <TableCell>
+                                        <Dropdown
+                                            id={`part-${row.id}`}
+                                            size={'sm'}
+                                            label={
+                                                row.partId
+                                                    ? masterPartsList.find(p => p.id === row.partId)?.name || 'Select part...'
+                                                    : 'Select part...'
+                                            }
+                                        >
+                                            <div className={'max-h-96 overflow-y-auto'}>
+                                                {masterPartsList.map((part) => (
+                                                    <DropdownItem
+                                                        key={part.id}
+                                                        onClick={() => handleRowPartChange(row.id, part.id!)}
+                                                    >
+                                                        {part.name}
+                                                    </DropdownItem>
+                                                ))}
+                                            </div>
+                                        </Dropdown>
+                                        {row.error && (
+                                            <span className={'text-red-400 text-xs mt-1'}>{row.error}</span>
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        <TextInput
+                                            id={`quantity-${row.id}`}
+                                            value={row.quantity || ''}
+                                            onChange={(e) => handleRowQuantityChange(row.id, parseFloat(e.target.value) || 0)}
+                                            sizing={'sm'}
+                                            type='number'
+                                            min={0}
+                                            max={1000}
+                                            step='any'
+                                            color={row.error ? 'failure' : 'gray'}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className={'flex flex-row gap-2'}>
+                                            {index === multiAddRows.length - 1 && (
+                                                <HiPlus
+                                                    className={'text-green-400 hover:text-green-200 cursor-pointer text-xl'}
+                                                    onClick={handleAddRow}
+                                                    title="Add another row"
+                                                />
+                                            )}
+                                            {multiAddRows.length > 1 && (
+                                                <HiX
+                                                    className={'text-red-400 hover:text-red-200 cursor-pointer text-xl'}
+                                                    onClick={() => handleRemoveRow(row.id)}
+                                                    title="Remove row"
+                                                />
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
                             ))}
-                        </div>
-                    </Dropdown>
+                        </TableBody>
+                    </Table>
                 </div>
-                <div>
-                    <div className={'mb-1 block'}>
-                        <span>Quantity</span>
-                    </div>
-                    <TextInput
-                        id='quantity'
-                        value={quantity}
-                        onChange={(event) => setQuantity(parseFloat(event.target.value))}
-                        required
-                        sizing={'sm'}
-                        type='number'
-                        min={0}
-                        max={1000}
-                        step='any'
-                    />
-                </div>
-                <div className={'flex flex-col justify-end'}>
-                    <div className={'mb-1 block float-right vertical-align-middle '}>
-                        <Button size={'sm'} className="btn btn-primary" onClick={() => handleAddItemPart()} >Add</Button>
-                    </div>
+
+                <div className={'flex flex-row justify-end gap-2'}>
+                    <Button
+                        size={'sm'}
+                        color={'green'}
+                        onClick={handleAddAllParts}
+                    >
+                        Add to Parts List
+                    </Button>
                 </div>
             </div>
 

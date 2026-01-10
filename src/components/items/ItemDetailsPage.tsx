@@ -100,14 +100,16 @@ export const ItemDetailsPage: React.FC = () => {
             setItemPartsList(updatedPartsList);
             return;
         } else {
-            const newlyAddedPart = newItemParts.filter(ip => ip.partId === itemPart.partId)[0];
-            if (!newlyAddedPart) {
-                setNewItemParts([...newItemParts, itemPart]);
-            } else {
-                const updatedNewItemParts = newItemParts.filter(ip => ip.partId !== itemPart.partId);
-                updatedNewItemParts.push(itemPart);
-                setNewItemParts(updatedNewItemParts);
-            }
+            setNewItemParts(prevNewItemParts => {
+                const newlyAddedPart = prevNewItemParts.filter(ip => ip.partId === itemPart.partId)[0];
+                if (!newlyAddedPart) {
+                    return [...prevNewItemParts, itemPart];
+                } else {
+                    const updatedNewItemParts = prevNewItemParts.filter(ip => ip.partId !== itemPart.partId);
+                    updatedNewItemParts.push(itemPart);
+                    return updatedNewItemParts;
+                }
+            });
         }
     }
 
