@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "flowbite-react";
 import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
+import {SortableTableHeadCell} from "@/components/wrappers/SortableTableHeadCell";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {PickList, PickListStatus} from "@/components/pickLists/PickList";
 import {Item} from "@/components/items/Item";
@@ -8,6 +9,7 @@ import {callDeletePickList, callPullPickList, callReturnPickList} from "@/servic
 import {removePickList, updatePickList} from "@/store/slices/PickListSlice";
 import {Part} from "@/components/parts/Part";
 import {MissingPartsModal} from "@/components/modals/MissingPartsModal";
+import {useSortableTable} from "@/hooks/useSortableTable";
 
 type DisplayPickList = PickList & {
     name: string,
@@ -26,21 +28,22 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
     const pickLists: PickList[] = useAppSelector((state) => state.pickLists.list);
     const items: Item[] = useAppSelector((state) => state.items.list);
     const parts: Part[] = useAppSelector((state) => state.parts.list);
-    const [displayPickList, setDisplayPickList] = useState<DisplayPickList[]>([]);
     const [missingParts, setMissingParts] = useState<DisplayMissingPart[]>([])
     const [showMissingParts, setShowMissingParts] = useState<boolean>(false);
     const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        const displayList = pickLists.map(pickList => {
-            const item = items.filter(item => item.id === pickList.itemId)[0];
+    const displayPickList: DisplayPickList[] = useMemo(() =>
+        pickLists.map(pickList => {
+            const item = items.find(item => item.id === pickList.itemId);
             return {
                 ...pickList,
                 name: item ? item.name : ''
             }
-        });
-        setDisplayPickList(displayList);
-    }, [items, pickLists]);
+        }),
+        [items, pickLists]
+    );
+
+    const { sortedData, sortConfig, handleSort } = useSortableTable(displayPickList, 'name');
 
     const handleDelete = async (id: number, response: boolean) => {
         if (response) {
@@ -83,14 +86,20 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
             <Table striped>
                 <TableHead className={'sticky top-0 bg-gray-800 z-10'}>
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                        <TableHeadCell>Item</TableHeadCell>
-                        <TableHeadCell>Quantity</TableHeadCell>
-                        <TableHeadCell>Status</TableHeadCell>
+                        <SortableTableHeadCell columnKey="name" sortConfig={sortConfig} onSort={handleSort}>
+                            Item
+                        </SortableTableHeadCell>
+                        <SortableTableHeadCell columnKey="quantity" sortConfig={sortConfig} onSort={handleSort}>
+                            Quantity
+                        </SortableTableHeadCell>
+                        <SortableTableHeadCell columnKey="pickListStatus" sortConfig={sortConfig} onSort={handleSort}>
+                            Status
+                        </SortableTableHeadCell>
                         <TableHeadCell>Actions</TableHeadCell>
                     </TableRow>
                 </TableHead>
                 <TableBody className="divide-y">
-                    {displayPickList.map((pickList) => {
+                    {sortedData.map((pickList) => {
                         const textColor = pickList.pickListStatus === PickListStatus.INSUFFICIENT_PARTS ? 'text-red-500' : '';
                         const pickListAction = {
                             canHandleAlt: pickList.pickListStatus === PickListStatus.DRAFT || pickList.pickListStatus === PickListStatus.PICKED,
