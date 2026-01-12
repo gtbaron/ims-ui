@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {
     Button,
     Dropdown,
@@ -78,35 +78,37 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         fetchCanBuild(props.item);
     }, [props.item]);
 
-    const handleAddRow = () => {
-        setMultiAddRows([
-            ...multiAddRows,
+    const handleAddRow = useCallback(() => {
+        setMultiAddRows(prev => [
+            ...prev,
             { id: crypto.randomUUID(), partId: undefined, quantity: 0 }
         ]);
-    };
+    }, []);
 
-    const handleRemoveRow = (rowId: string) => {
-        if (multiAddRows.length === 1) return;
-        setMultiAddRows(multiAddRows.filter(row => row.id !== rowId));
-    };
+    const handleRemoveRow = useCallback((rowId: string) => {
+        setMultiAddRows(prev => {
+            if (prev.length === 1) return prev;
+            return prev.filter(row => row.id !== rowId);
+        });
+    }, []);
 
-    const handleRowPartChange = (rowId: string, newPartId: number) => {
-        setMultiAddRows(multiAddRows.map(row =>
+    const handleRowPartChange = useCallback((rowId: string, newPartId: number) => {
+        setMultiAddRows(prev => prev.map(row =>
             row.id === rowId ? { ...row, partId: newPartId, error: undefined, searchTerm: '' } : row
         ));
-    };
+    }, []);
 
-    const handleRowQuantityChange = (rowId: string, newQuantity: number) => {
-        setMultiAddRows(multiAddRows.map(row =>
+    const handleRowQuantityChange = useCallback((rowId: string, newQuantity: number) => {
+        setMultiAddRows(prev => prev.map(row =>
             row.id === rowId ? { ...row, quantity: newQuantity, error: undefined } : row
         ));
-    };
+    }, []);
 
-    const handleRowSearchChange = (rowId: string, searchTerm: string) => {
-        setMultiAddRows(multiAddRows.map(row =>
+    const handleRowSearchChange = useCallback((rowId: string, searchTerm: string) => {
+        setMultiAddRows(prev => prev.map(row =>
             row.id === rowId ? { ...row, searchTerm } : row
         ));
-    };
+    }, []);
 
     const validateRows = (): boolean => {
         let isValid = true;
@@ -190,19 +192,19 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
 
     useEffect(() => {
         updateCostOfParts(itemPartsList);
-    });
+    }, [itemPartsList, masterPartsList]);
 
-    const getNameFor = (itemPartId: number | undefined): string => {
+    const getNameFor = useCallback((itemPartId: number | undefined): string => {
         if (!itemPartId) return '';
         const namedItemPart = masterPartsList.find(ip => ip.id === itemPartId);
         return namedItemPart ? namedItemPart.name : '';
-    }
+    }, [masterPartsList]);
 
-    const getUnitCostFor = (partId: number | undefined): number => {
+    const getUnitCostFor = useCallback((partId: number | undefined): number => {
         if (!partId) return 0;
         const part = masterPartsList.find(part => part.id === partId);
         return part ? part.bulkPrice / part.bulkQuantity : 0;
-    }
+    }, [masterPartsList]);
 
     const handleShowEditItemPartModal = (itemPartIdToEdit: number | undefined, partId?: number) => {
         const editItemPart = itemPartIdToEdit
@@ -236,10 +238,10 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         props.handleAddUpdateItemPart(updatedItemPart);
     }
 
-    const haveEnoughParts = (partId: number, quantity: number) => {
-        const part = masterPartsList.filter(part => part.id === partId)[0];
+    const haveEnoughParts = useCallback((partId: number, quantity: number) => {
+        const part = masterPartsList.find(part => part.id === partId);
         return part && part.quantityOnHand >= quantity;
-    }
+    }, [masterPartsList]);
 
     return (
         <div className={'bg-gray-800 rounded-xl space-y-6 text-left p-6 m-2 w-full'}>

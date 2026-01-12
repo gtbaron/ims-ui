@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {
     callCreateItem,
     callCreateItemParts,
@@ -83,25 +83,27 @@ export const ItemDetailsPage: React.FC = () => {
         navigate('/items');
     }
 
-    const handleItemPartsCostChanged = (updatedCostOfParts: number) => {
+    const handleItemPartsCostChanged = useCallback((updatedCostOfParts: number) => {
         setCostOfParts(updatedCostOfParts);
-    }
+    }, []);
 
-    const handleSuggestedListPriceChanged = (suggestedListPrice: number) => {
+    const handleSuggestedListPriceChanged = useCallback((suggestedListPrice: number) => {
         setSuggestedListPrice(suggestedListPrice);
-    }
+    }, []);
 
-    const handleAddUpdateItemPart = (itemPart: ItemPart) => {
+    const handleAddUpdateItemPart = useCallback((itemPart: ItemPart) => {
         if (itemPart.id) {
             itemPart.dirty = true;
-            const updatedPartsList = itemPartsList.filter(ip => ip.id !== itemPart.id);
-            updatedPartsList.push(itemPart);
-            updatedPartsList.sort((a, b) => a.partId - b.partId);
-            setItemPartsList(updatedPartsList);
+            setItemPartsList(prev => {
+                const updatedPartsList = prev.filter(ip => ip.id !== itemPart.id);
+                updatedPartsList.push(itemPart);
+                updatedPartsList.sort((a, b) => a.partId - b.partId);
+                return updatedPartsList;
+            });
             return;
         } else {
             setNewItemParts(prevNewItemParts => {
-                const newlyAddedPart = prevNewItemParts.filter(ip => ip.partId === itemPart.partId)[0];
+                const newlyAddedPart = prevNewItemParts.find(ip => ip.partId === itemPart.partId);
                 if (!newlyAddedPart) {
                     return [...prevNewItemParts, itemPart];
                 } else {
@@ -111,20 +113,21 @@ export const ItemDetailsPage: React.FC = () => {
                 }
             });
         }
-    }
+    }, []);
 
-    const handleItemPartDeleted = (itemPartIdToDelete: number, altId?: number) => {
+    const handleItemPartDeleted = useCallback((itemPartIdToDelete: number, altId?: number) => {
         if (itemPartIdToDelete !== 0) {
-            const itemPartToDelete = itemPartsList.find(ip => ip.id === itemPartIdToDelete);
-            if (!itemPartToDelete) return;
-
-            setItemPartsToDelete([...itemPartsToDelete, itemPartToDelete]);
-            const updatedPartsList = itemPartsList.filter(ip => ip.id !== itemPartIdToDelete);
-            setItemPartsList(updatedPartsList);
+            setItemPartsList(prev => {
+                const itemPartToDelete = prev.find(ip => ip.id === itemPartIdToDelete);
+                if (itemPartToDelete) {
+                    setItemPartsToDelete(prevDelete => [...prevDelete, itemPartToDelete]);
+                }
+                return prev.filter(ip => ip.id !== itemPartIdToDelete);
+            });
         } else {
-            setNewItemParts(newItemParts.filter(ip => ip.partId !== altId   ));
+            setNewItemParts(prev => prev.filter(ip => ip.partId !== altId));
         }
-    }
+    }, []);
 
     return (
         <div>
