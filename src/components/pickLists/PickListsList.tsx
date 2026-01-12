@@ -70,13 +70,13 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
         const toShow: PickList = pickLists.filter(pickList => pickList.id === id)[0];
         if (!toShow) return;
 
-        const missingItemParts: DisplayMissingPart[] = toShow.missingParts.map(id => {
-            const part: Part = parts.filter(p => p.id === id)[0];
-            return {
+        const missingItemParts: DisplayMissingPart[] = toShow.missingParts
+            .map(id => parts.find(p => p.id === id))
+            .filter((part): part is Part => part !== undefined)
+            .map(part => ({
                 name: part.name,
                 quantityOnHand: part.quantityOnHand,
-            }
-        });
+            }));
         setMissingParts(missingItemParts);
         setShowMissingParts(true);
     }

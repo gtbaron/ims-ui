@@ -16,7 +16,7 @@ export const ConfirmModal: React.FC<ConfirmDeleteModalProps> = (props: ConfirmDe
     }
 
     return (
-        <Modal show={!!open} size="md" onClose={() => handleResponse(false)} popup>
+        <Modal show={!!props.open} size="md" onClose={() => handleResponse(false)} popup>
             <ModalHeader />
             <ModalBody>
                 <div className="text-center">
