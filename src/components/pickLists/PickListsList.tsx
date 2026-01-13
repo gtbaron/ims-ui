@@ -1,5 +1,6 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "flowbite-react";
+import {IoClipboardOutline} from "react-icons/io5";
 import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
 import {SortableTableHeadCell} from "@/components/wrappers/SortableTableHeadCell";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
@@ -45,23 +46,19 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
 
     const { sortedData, sortConfig, handleSort } = useSortableTable(displayPickList, 'name');
 
-    const handleDelete = async (id: number, response: boolean) => {
-        if (response) {
-            const success = await callDeletePickList(id);
-            if (success) {
-                dispatch(removePickList(id))
-            }
+    const handleDelete = async (id: number) => {
+        const success = await callDeletePickList(id);
+        if (success) {
+            dispatch(removePickList(id))
         }
     }
 
-    const handlePullPickListResponse = async (id: number | undefined, response: boolean) => {
-        if (!response || !id) return;
+    const handlePullPickList = async (id: number) => {
         const existing = await callPullPickList(id);
         dispatch(updatePickList(existing));
     }
 
-    const handleReturnPickListResponse = async (id: number | undefined, response: boolean) => {
-        if (!response || !id) return;
+    const handleReturnPickList = async (id: number) => {
         const existing = await callReturnPickList(id);
         dispatch(updatePickList(existing));
     }
@@ -101,12 +98,11 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                 <TableBody className="divide-y">
                     {sortedData.map((pickList) => {
                         const textColor = pickList.pickListStatus === PickListStatus.INSUFFICIENT_PARTS ? 'text-red-500' : '';
-                        const pickListAction = {
-                            canHandleAlt: pickList.pickListStatus === PickListStatus.DRAFT || pickList.pickListStatus === PickListStatus.PICKED,
-                            handleAlt: pickList.pickListStatus === PickListStatus.DRAFT ? handlePullPickListResponse : handleReturnPickListResponse,
-                            altTitle: `Are you sure you want to ${pickList.pickListStatus === PickListStatus.DRAFT ? 'pull' : 'return'} parts for:`,
-                            altToolTip: pickList.pickListStatus === PickListStatus.DRAFT ? 'Pull parts from inventory.' : 'Return parts to inventory.',
-                        };
+                        const displayName = `${pickList.quantity} ${pickList.name}${pickList.quantity === 1 ? '' : 's'}`;
+                        const isPulled = pickList.pickListStatus === PickListStatus.PICKED;
+                        const isDraft = pickList.pickListStatus === PickListStatus.DRAFT;
+                        const canPullOrReturn = isDraft || isPulled;
+
                         return <TableRow key={pickList.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${textColor}`}>
                             <TableCell>{pickList.name}</TableCell>
                             <TableCell>{pickList.quantity}</TableCell>
@@ -120,15 +116,23 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                                 {pickList.pickListStatus}
                             </TableCell>
                             <ActionsTableCell
-                                handleDelete={handleDelete}
-                                canEdit={pickList.pickListStatus !== PickListStatus.PICKED}
-                                handleEdit={props.handleEdit}
-                                id={pickList.id}
-                                displayName={`${pickList.quantity} ${pickList.name}${pickList.quantity === 1 ? '' : 's'}`}
-                                canHandleAlt={pickListAction.canHandleAlt}
-                                handleAlt={pickListAction.handleAlt}
-                                altTitle={pickListAction.altTitle}
-                                altToolTip={pickListAction.altToolTip}
+                                displayName={displayName}
+                                actions={[
+                                    {
+                                        type: 'custom',
+                                        icon: <IoClipboardOutline className="text-gray-400" />,
+                                        disabled: !canPullOrReturn,
+                                        tooltip: isDraft ? 'Pull parts from inventory.' : 'Return parts to inventory.',
+                                        onAction: () => isDraft ? handlePullPickList(pickList.id!) : handleReturnPickList(pickList.id!),
+                                        confirmTitle: `Are you sure you want to ${isDraft ? 'pull' : 'return'} parts for:`
+                                    },
+                                    {
+                                        type: 'edit',
+                                        disabled: isPulled,
+                                        onEdit: () => props.handleEdit(pickList.id)
+                                    },
+                                    { type: 'delete', onDelete: () => handleDelete(pickList.id!) }
+                                ]}
                             />
                         </TableRow>
                     })}

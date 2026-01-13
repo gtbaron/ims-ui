@@ -18,12 +18,10 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
     const dispatch = useAppDispatch();
     const { sortedData, sortConfig, handleSort } = useSortableTable(itemsList, 'name');
 
-    const handleDelete = async (id: number, response: boolean) => {
-        if (response) {
-            const success = await callDeleteItem(id);
-            if (success) {
-                dispatch(removeItem(id))
-            }
+    const handleDelete = async (id: number) => {
+        const success = await callDeleteItem(id);
+        if (success) {
+            dispatch(removeItem(id))
         }
     }
 
@@ -64,11 +62,11 @@ export const ItemsList: React.FC<ItemsListProps> = (props: ItemsListProps) => {
                             <TableCell>{item.quantityOnHand}</TableCell>
                             <TableCell>{item.desiredQuantity}</TableCell>
                             <ActionsTableCell
-                                handleDelete={handleDelete}
-                                canEdit={true}
-                                handleEdit={props.handleEdit}
-                                id={item.id}
                                 displayName={item.name}
+                                actions={[
+                                    { type: 'edit', onEdit: () => props.handleEdit(item.id) },
+                                    { type: 'delete', onDelete: () => handleDelete(item.id!) }
+                                ]}
                             />
                         </TableRow>
                     })}

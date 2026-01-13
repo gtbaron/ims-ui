@@ -218,9 +218,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         setShowEditItemPartModal(true)
     }
 
-    const handleItemPartDeleted = (itemPartIdToDelete: number, response: boolean, altId?: number) => {
-        if (!response) return;
-
+    const handleItemPartDeleted = (itemPartIdToDelete: number, altId?: number) => {
         if (itemPartIdToDelete === 0) {
             const updatedItemPartsList = itemPartsList.filter(ip => ip.partId !== altId);
             setItemPartsList(updatedItemPartsList);
@@ -273,12 +271,11 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                             <TableCell>{itemPart.quantity}</TableCell>
                                             <TableCell>{usdFormatter.format(itemPart.quantity * getUnitCostFor(itemPart.partId))}</TableCell>
                                             <ActionsTableCell
-                                                id={itemPart.id}
-                                                altId={itemPart.partId}
                                                 displayName={itemPart.name}
-                                                handleEdit={handleShowEditItemPartModal}
-                                                canEdit={true}
-                                                handleDelete={handleItemPartDeleted}
+                                                actions={[
+                                                    { type: 'edit', onEdit: () => handleShowEditItemPartModal(itemPart.id, itemPart.partId) },
+                                                    { type: 'delete', onDelete: () => handleItemPartDeleted(itemPart.id || 0, itemPart.partId) }
+                                                ]}
                                             />
                                         </TableRow>
                                     })}

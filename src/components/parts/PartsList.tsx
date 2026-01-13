@@ -31,12 +31,10 @@ const PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
 
     const { sortedData, sortConfig, handleSort } = useSortableTable(displayParts, 'name');
 
-    const handleDelete = async (id: number, response: boolean) => {
-        if (response) {
-            const success = await callDeletePart(id);
-            if (success) {
-                dispatch(removePart(id))
-            }
+    const handleDelete = async (id: number) => {
+        const success = await callDeletePart(id);
+        if (success) {
+            dispatch(removePart(id))
         }
     }
 
@@ -77,12 +75,13 @@ const PartsList: React.FC<PartsListProps> = (props: PartsListProps) => {
                             <CurrencyTableCell value={part.unitPrice}/>
                             <TableCell>{part.quantityOnHand}</TableCell>
                             <ActionsTableCell
-                                href={part.url}
-                                handleDelete={handleDelete}
-                                canEdit={true}
-                                handleEdit={props.handleEdit}
-                                id={part.id}
-                                displayName={part.name}/>
+                                displayName={part.name}
+                                actions={[
+                                    ...(part.url ? [{ type: 'link' as const, href: part.url }] : []),
+                                    { type: 'edit', onEdit: () => props.handleEdit(part.id) },
+                                    { type: 'delete', onDelete: () => handleDelete(part.id!) }
+                                ]}
+                            />
                         </TableRow>
                     })}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
