@@ -337,27 +337,26 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                                 />
                                             </div>
                                             <div className={'max-h-96 overflow-y-auto w-64'}>
-                                                {masterPartsList
-                                                    .filter(part =>
+                                                {(() => {
+                                                    const filteredParts = masterPartsList.filter(part =>
                                                         !row.searchTerm ||
                                                         part.name.toLowerCase().includes(row.searchTerm.toLowerCase())
-                                                    )
-                                                    .map((part) => (
-                                                        <DropdownItem
-                                                            key={part.id}
-                                                            onClick={() => handleRowPartChange(row.id, part.id!)}
-                                                        >
-                                                            {part.name}
-                                                        </DropdownItem>
-                                                    ))}
-                                                {masterPartsList.filter(part =>
-                                                    !row.searchTerm ||
-                                                    part.name.toLowerCase().includes(row.searchTerm.toLowerCase())
-                                                ).length === 0 && (
-                                                    <div className={'p-2 text-gray-400 text-center w-64'}>
-                                                        No parts found
-                                                    </div>
-                                                )}
+                                                    );
+                                                    return filteredParts.length > 0 ? (
+                                                        filteredParts.map((part) => (
+                                                            <DropdownItem
+                                                                key={part.id}
+                                                                onClick={() => handleRowPartChange(row.id, part.id!)}
+                                                            >
+                                                                {part.name}
+                                                            </DropdownItem>
+                                                        ))
+                                                    ) : (
+                                                        <div className={'p-2 text-gray-400 text-center w-64'}>
+                                                            No parts found
+                                                        </div>
+                                                    );
+                                                })()}
                                             </div>
                                         </Dropdown>
                                         </div>
