@@ -1,4 +1,4 @@
-import {createSlice} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 type ShopState = {
     discount: number;
@@ -12,7 +12,7 @@ export const shopSlice = createSlice({
     name: 'shop',
     initialState,
     reducers: {
-        setDiscount: (state, action) => {
+        setDiscount: (state, action: PayloadAction<number>) => {
             state.discount = action.payload;
         }
     }

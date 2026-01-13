@@ -29,6 +29,8 @@ export const ItemDetailsPage: React.FC = () => {
     const [newItemParts, setNewItemParts] = useState<ItemPart[]>([]);
     const [itemPartsToDelete, setItemPartsToDelete] = useState<ItemPart[]>([])
     const [suggestedListPrice, setSuggestedListPrice] = useState(0);
+    const [isSaving, setIsSaving] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchCostOfParts = async () => {
@@ -62,25 +64,37 @@ export const ItemDetailsPage: React.FC = () => {
     }
 
     const handleAddUpdateItem = async () => {
-        if (item.id) {
-            const toUpdate: Item = {...item, listPrice: item.overrideSuggestedListPrice ? item.listPrice : suggestedListPrice};
-            const updatedItem = await callUpdateItem(toUpdate);
-            dispatch(updateItem(updatedItem));
+        setIsSaving(true);
+        setSaveError(null);
 
-            await callCreateItemParts(item.id, newItemParts);
-            await callUpdateItemParts(item.id, itemPartsList.filter(ip => ip.dirty));
-            await callDeleteItemParts(item.id, itemPartsToDelete);
-        } else {
-            const toAdd = {...item, listPrice: item.overrideSuggestedListPrice ? item.listPrice : suggestedListPrice};
-            const createdItem = await callCreateItem(toAdd);
+        try {
+            if (item.id) {
+                const toUpdate: Item = {...item, listPrice: item.overrideSuggestedListPrice ? item.listPrice : suggestedListPrice};
+                const updatedItem = await callUpdateItem(toUpdate);
+                dispatch(updateItem(updatedItem));
 
-            if (!createdItem.id) return;
+                await callCreateItemParts(item.id, newItemParts);
+                await callUpdateItemParts(item.id, itemPartsList.filter(ip => ip.dirty));
+                await callDeleteItemParts(item.id, itemPartsToDelete);
+            } else {
+                const toAdd = {...item, listPrice: item.overrideSuggestedListPrice ? item.listPrice : suggestedListPrice};
+                const createdItem = await callCreateItem(toAdd);
 
-            dispatch(addItem(createdItem));
-            await callCreateItemParts(createdItem.id, newItemParts);
+                if (!createdItem.id) {
+                    throw new Error('Failed to create item');
+                }
+
+                dispatch(addItem(createdItem));
+                await callCreateItemParts(createdItem.id, newItemParts);
+            }
+
+            navigate('/items');
+        } catch (error) {
+            console.error('Error saving item:', error);
+            setSaveError('Failed to save item. Please try again.');
+        } finally {
+            setIsSaving(false);
         }
-
-        navigate('/items');
     }
 
     const handleItemPartsCostChanged = useCallback((updatedCostOfParts: number) => {
@@ -151,9 +165,14 @@ export const ItemDetailsPage: React.FC = () => {
                     handleItemPartDeleted={handleItemPartDeleted}
                 />
             </div>
+            {saveError && (
+                <div className="text-red-500 text-sm m-2">{saveError}</div>
+            )}
             <div className="flex flex-row justify-between m-2">
                 <Button color={'gray'} size={'sm'} onClick={() => navigate(-1)}>Cancel</Button>
-                <Button color={'green'} size={'sm'} className="btn btn-primary" onClick={handleAddUpdateItem}>Save</Button>
+                <Button color={'green'} size={'sm'} className="btn btn-primary" onClick={handleAddUpdateItem} disabled={isSaving}>
+                    {isSaving ? 'Saving...' : 'Save'}
+                </Button>
             </div>
         </div>
     )

@@ -123,7 +123,10 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                                         icon: <IoClipboardOutline className="text-gray-400" />,
                                         disabled: !canPullOrReturn,
                                         tooltip: isDraft ? 'Pull parts from inventory.' : 'Return parts to inventory.',
-                                        onAction: () => isDraft ? handlePullPickList(pickList.id!) : handleReturnPickList(pickList.id!),
+                                        onAction: () => {
+                                            if (!pickList.id) return;
+                                            isDraft ? handlePullPickList(pickList.id) : handleReturnPickList(pickList.id);
+                                        },
                                         confirmTitle: `Are you sure you want to ${isDraft ? 'pull' : 'return'} parts for:`
                                     },
                                     {
@@ -131,7 +134,13 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                                         disabled: isPulled,
                                         onEdit: () => props.handleEdit(pickList.id)
                                     },
-                                    { type: 'delete', onDelete: () => handleDelete(pickList.id!) }
+                                    {
+                                        type: 'delete',
+                                        onDelete: () => {
+                                            if (!pickList.id) return;
+                                            handleDelete(pickList.id);
+                                        }
+                                    }
                                 ]}
                             />
                         </TableRow>
