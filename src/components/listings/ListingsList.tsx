@@ -1,5 +1,5 @@
 import React, {useMemo} from "react";
-import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "flowbite-react";
+import {Table, TableBody, TableCell, TableHead, TableRow} from "flowbite-react";
 import {useAppSelector} from "@/store/hooks";
 import {ItemListing} from "@/components/listings/ItemListing";
 import {calculateItemFinancials} from "@/utils/FinancialCalculations";

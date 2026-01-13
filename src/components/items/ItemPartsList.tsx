@@ -310,56 +310,62 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
                                     className={`dark:border-gray-700 dark:bg-gray-800 ${row.error ? 'bg-red-900 bg-opacity-20' : ''}`}
                                 >
                                     <TableCell>
-                                        <div className="part-dropdown">
-                                            <Dropdown
-                                                id={`part-${row.id}`}
-                                                size={'sm'}
-                                                label={
-                                                    row.partId
-                                                        ? masterPartsList.find(p => p.id === row.partId)?.name || 'Select part...'
-                                                        : 'Select part...'
+                                        <Dropdown
+                                            id={`part-${row.id}`}
+                                            size={'sm'}
+                                            label={
+                                                row.partId
+                                                    ? masterPartsList.find(p => p.id === row.partId)?.name || 'Select part...'
+                                                    : 'Select part...'
+                                            }
+                                            theme={{
+                                                floating: {
+                                                    target: 'w-fit'
                                                 }
-                                            >
-                                            <div
-                                                className={'p-2 border-b border-gray-600 w-64'}
-                                                onClick={(e) => e.stopPropagation()}
-                                            >
-                                                <TextInput
-                                                    id={`search-${row.id}`}
-                                                    type="text"
-                                                    placeholder="Search parts..."
-                                                    value={row.searchTerm || ''}
-                                                    onChange={(e) => handleRowSearchChange(row.id, e.target.value)}
-                                                    sizing={'sm'}
-                                                    autoComplete="off"
+                                            }}
+                                        >
+                                            <div className="w-64 text-left">
+                                                <div
+                                                    className={'p-2 border-b border-gray-600'}
                                                     onClick={(e) => e.stopPropagation()}
-                                                    onKeyDown={(e) => e.stopPropagation()}
-                                                />
-                                            </div>
-                                            <div className={'max-h-96 overflow-y-auto w-64'}>
-                                                {(() => {
-                                                    const filteredParts = masterPartsList.filter(part =>
-                                                        !row.searchTerm ||
-                                                        part.name.toLowerCase().includes(row.searchTerm.toLowerCase())
-                                                    );
-                                                    return filteredParts.length > 0 ? (
-                                                        filteredParts.map((part) => (
-                                                            <DropdownItem
-                                                                key={part.id}
-                                                                onClick={() => handleRowPartChange(row.id, part.id!)}
-                                                            >
-                                                                {part.name}
-                                                            </DropdownItem>
-                                                        ))
-                                                    ) : (
-                                                        <div className={'p-2 text-gray-400 text-center w-64'}>
-                                                            No parts found
-                                                        </div>
-                                                    );
-                                                })()}
+                                                >
+                                                    <TextInput
+                                                        id={`search-${row.id}`}
+                                                        type="text"
+                                                        placeholder="Search parts..."
+                                                        value={row.searchTerm || ''}
+                                                        onChange={(e) => handleRowSearchChange(row.id, e.target.value)}
+                                                        sizing={'sm'}
+                                                        autoComplete="off"
+                                                        onClick={(e) => e.stopPropagation()}
+                                                        onKeyDown={(e) => e.stopPropagation()}
+                                                    />
+                                                </div>
+                                                <div className={'max-h-96 overflow-y-auto'}>
+                                                    {(() => {
+                                                        const filteredParts = masterPartsList.filter(part =>
+                                                            !row.searchTerm ||
+                                                            part.name.toLowerCase().includes(row.searchTerm.toLowerCase())
+                                                        );
+                                                        return filteredParts.length > 0 ? (
+                                                            filteredParts.map((part) => (
+                                                                <DropdownItem
+                                                                    key={part.id}
+                                                                    onClick={() => handleRowPartChange(row.id, part.id!)}
+                                                                    className="!text-left"
+                                                                >
+                                                                    {part.name}
+                                                                </DropdownItem>
+                                                            ))
+                                                        ) : (
+                                                            <div className={'p-2 text-gray-400 text-center'}>
+                                                                No parts found
+                                                            </div>
+                                                        );
+                                                    })()}
+                                                </div>
                                             </div>
                                         </Dropdown>
-                                        </div>
                                         {row.error && (
                                             <span className={'text-red-400 text-xs mt-1'}>{row.error}</span>
                                         )}
