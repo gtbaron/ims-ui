@@ -55,7 +55,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
 
     useEffect(() => {
         const displayItemPartsList = props.itemPartsList.map((itemPart: ItemPart) => {
-            const part = masterPartsList.filter(part => part.id === itemPart.partId)[0];
+            const part = masterPartsList.find(part => part.id === itemPart.partId);
             return {
                 ...itemPart,
                 name: part ? part.name : ''
@@ -176,7 +176,7 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
         ]);
     };
 
-    const updateCostOfParts = (partListToCompute: ItemPart[]) => {
+    const updateCostOfParts = useCallback((partListToCompute: ItemPart[]) => {
         const costOfParts = partListToCompute.reduce(
             (total, itemPart) => {
                 const part = masterPartsList.find(part => part.id === itemPart.partId);
@@ -188,11 +188,11 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
             0
         )
         props.handleItemPartsCostChanged(costOfParts);
-    }
+    }, [masterPartsList, props.handleItemPartsCostChanged]);
 
     useEffect(() => {
         updateCostOfParts(itemPartsList);
-    }, [itemPartsList, masterPartsList]);
+    }, [itemPartsList, updateCostOfParts]);
 
     const getNameFor = useCallback((itemPartId: number | undefined): string => {
         if (!itemPartId) return '';
@@ -208,8 +208,8 @@ export const ItemPartsList: React.FC<ItemPartsListProps> = (props: ItemPartsList
 
     const handleShowEditItemPartModal = (itemPartIdToEdit: number | undefined, partId?: number) => {
         const editItemPart = itemPartIdToEdit
-            ? itemPartsList.filter(ip => ip.id === itemPartIdToEdit)[0]
-            : itemPartsList.filter(ip => ip.partId === partId)[0];
+            ? itemPartsList.find(ip => ip.id === itemPartIdToEdit)
+            : itemPartsList.find(ip => ip.partId === partId);
 
         if (!editItemPart) return;
 
