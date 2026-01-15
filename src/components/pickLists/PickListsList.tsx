@@ -238,6 +238,7 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                                     {
                                         type: 'delete',
                                         disabled: !canDelete,
+                                        tooltip: 'Delete pick list',
                                         onDelete: () => {
                                             if (!pickList.id) return;
                                             handleDelete(pickList.id);
