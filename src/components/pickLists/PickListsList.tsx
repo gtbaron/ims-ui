@@ -1,12 +1,13 @@
 import React, {useMemo, useState} from "react";
-import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow} from "flowbite-react";
-import {IoClipboardOutline} from "react-icons/io5";
+import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Tooltip} from "flowbite-react";
+import {IoClipboardOutline, IoCheckmarkCircleOutline, IoCloseCircleOutline, IoArchiveOutline, IoArrowUndoOutline} from "react-icons/io5";
 import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
 import {SortableTableHeadCell} from "@/components/wrappers/SortableTableHeadCell";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {PickList, PickListStatus} from "@/components/pickLists/PickList";
 import {Item} from "@/components/items/Item";
-import {callDeletePickList, callPullPickList, callReturnPickList} from "@/services/PickListService";
+import {callDeletePickList, callPullPickList, callReturnPickList, callCompletePickList, callCancelPickList, callArchivePickList} from "@/services/PickListService";
+import {callGetItemParts} from "@/services/ItemsService";
 import {removePickList, updatePickList} from "@/store/slices/PickListSlice";
 import {Part} from "@/components/parts/Part";
 import {MissingPartsModal} from "@/components/modals/MissingPartsModal";
@@ -18,6 +19,7 @@ type DisplayPickList = PickList & {
 
 export type DisplayMissingPart = {
     name: string,
+    quantityRequired: number,
     quantityOnHand: number,
 }
 
@@ -63,15 +65,37 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
         dispatch(updatePickList(existing));
     }
 
-    const handleShowMissingParts = (id: number) => {
+    const handleCompletePickList = async (id: number) => {
+        const existing = await callCompletePickList(id);
+        dispatch(updatePickList(existing));
+    }
+
+    const handleCancelPickList = async (id: number) => {
+        const existing = await callCancelPickList(id);
+        dispatch(updatePickList(existing));
+    }
+
+    const handleArchivePickList = async (id: number) => {
+        const existing = await callArchivePickList(id);
+        dispatch(removePickList(id));
+    }
+
+    const handleShowMissingParts = async (id: number) => {
         const toShow: PickList = pickLists.filter(pickList => pickList.id === id)[0];
-        if (!toShow) return;
+        if (!toShow || !toShow.itemId) return;
+
+        const itemParts = await callGetItemParts(toShow.itemId);
 
         const missingItemParts: DisplayMissingPart[] = toShow.missingParts
-            .map(id => parts.find(p => p.id === id))
-            .filter((part): part is Part => part !== undefined)
-            .map(part => ({
+            .map(partId => {
+                const part = parts.find(p => p.id === partId);
+                const itemPart = itemParts.find(ip => ip.partId === partId);
+                return part && itemPart ? { part, itemPart } : undefined;
+            })
+            .filter((data): data is { part: Part; itemPart: { quantity: number } } => data !== undefined)
+            .map(({ part, itemPart }) => ({
                 name: part.name,
+                quantityRequired: itemPart.quantity * toShow.quantity,
                 quantityOnHand: part.quantityOnHand,
             }));
         setMissingParts(missingItemParts);
@@ -92,50 +116,128 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                         <SortableTableHeadCell columnKey="pickListStatus" sortConfig={sortConfig} onSort={handleSort}>
                             Status
                         </SortableTableHeadCell>
-                        <TableHeadCell>Actions</TableHeadCell>
+                        <TableHeadCell className="text-center">Actions</TableHeadCell>
                     </TableRow>
                 </TableHead>
                 <TableBody className="divide-y">
                     {sortedData.map((pickList) => {
-                        const textColor = pickList.pickListStatus === PickListStatus.INSUFFICIENT_PARTS ? 'text-red-500' : '';
+                        const status = pickList.pickListStatus;
                         const displayName = `${pickList.quantity} ${pickList.name}${pickList.quantity === 1 ? '' : 's'}`;
-                        const isPulled = pickList.pickListStatus === PickListStatus.PICKED;
-                        const isDraft = pickList.pickListStatus === PickListStatus.DRAFT;
-                        const canPullOrReturn = isDraft || isPulled;
 
-                        return <TableRow key={pickList.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${textColor}`}>
+                        // Status flags
+                        const isReadyToPick = status === PickListStatus.READY_TO_PICK;
+                        const isInBuild = status === PickListStatus.IN_BUILD;
+                        const isCompleted = status === PickListStatus.COMPLETED;
+                        const isCancelled = status === PickListStatus.CANCELLED;
+                        const isArchived = status === PickListStatus.ARCHIVED;
+                        const isInsufficientParts = status === PickListStatus.INSUFFICIENT_PARTS;
+                        const isDraft = status === PickListStatus.DRAFT;
+
+                        // Action availability
+                        const canPull = isReadyToPick;
+                        const canReturn = isInBuild;
+                        const canComplete = isInBuild;
+                        const canCancel = isDraft || isInsufficientParts || isReadyToPick || isInBuild;
+                        const canArchive = isCompleted || isCancelled;
+                        const canEdit = isDraft || isInsufficientParts || isReadyToPick;
+                        const canDelete = isDraft || isInsufficientParts || isReadyToPick;
+
+                        // Status color styling
+                        const getStatusColor = () => {
+                            if (isInsufficientParts) return 'text-red-500';
+                            if (isReadyToPick) return 'text-green-500';
+                            if (isInBuild) return 'text-blue-500';
+                            if (isCompleted) return 'text-gray-400';
+                            if (isCancelled) return 'text-gray-400 line-through';
+                            if (isArchived) return 'text-gray-500';
+                            return '';
+                        };
+
+                        return <TableRow key={pickList.id} className={`bg-white dark:border-gray-700 dark:bg-gray-800`}>
                             <TableCell>{pickList.name}</TableCell>
                             <TableCell>{pickList.quantity}</TableCell>
-                            <TableCell className={`${ pickList.pickListStatus === PickListStatus.INSUFFICIENT_PARTS ? 'cursor-pointer' : ''}`}
+                            <TableCell className={`${getStatusColor()} ${isInsufficientParts ? 'cursor-pointer' : ''}`}
                                 onClick={() => {
-                                    if (pickList.pickListStatus === PickListStatus.INSUFFICIENT_PARTS) {
+                                    if (isInsufficientParts) {
                                         handleShowMissingParts(pickList.id || 0);
                                     }
                                 }}
                             >
-                                {pickList.pickListStatus}
+                                {isInsufficientParts ? (
+                                    <Tooltip content="Click to see insufficient parts">
+                                        <span>{pickList.pickListStatus}</span>
+                                    </Tooltip>
+                                ) : (
+                                    pickList.pickListStatus
+                                )}
                             </TableCell>
                             <ActionsTableCell
                                 displayName={displayName}
                                 actions={[
                                     {
                                         type: 'custom',
-                                        icon: <IoClipboardOutline className="text-gray-400" />,
-                                        disabled: !canPullOrReturn,
-                                        tooltip: isDraft ? 'Pull parts from inventory.' : 'Return parts to inventory.',
+                                        icon: <IoClipboardOutline  />,
+                                        disabled: !canPull,
+                                        tooltip: 'Pull parts from inventory',
                                         onAction: () => {
                                             if (!pickList.id) return;
-                                            isDraft ? handlePullPickList(pickList.id) : handleReturnPickList(pickList.id);
+                                            handlePullPickList(pickList.id);
                                         },
-                                        confirmTitle: `Are you sure you want to ${isDraft ? 'pull' : 'return'} parts for:`
+                                        confirmTitle: 'Are you sure you want to pull parts for:'
+                                    },
+                                    {
+                                        type: 'custom',
+                                        icon: <IoArrowUndoOutline  />,
+                                        disabled: !canReturn,
+                                        tooltip: 'Return parts to inventory',
+                                        onAction: () => {
+                                            if (!pickList.id) return;
+                                            handleReturnPickList(pickList.id);
+                                        },
+                                        confirmTitle: 'Are you sure you want to return parts for:'
+                                    },
+                                    {
+                                        type: 'custom',
+                                        icon: <IoCheckmarkCircleOutline  />,
+                                        disabled: !canComplete,
+                                        tooltip: 'Mark build as complete',
+                                        onAction: () => {
+                                            if (!pickList.id) return;
+                                            handleCompletePickList(pickList.id);
+                                        },
+                                        confirmTitle: 'Are you sure you want to complete:'
+                                    },
+                                    {
+                                        type: 'custom',
+                                        icon: <IoCloseCircleOutline  />,
+                                        disabled: !canCancel,
+                                        tooltip: 'Cancel pick list',
+                                        onAction: () => {
+                                            if (!pickList.id) return;
+                                            handleCancelPickList(pickList.id);
+                                        },
+                                        confirmTitle: 'Are you sure you want to cancel:'
+                                    },
+                                    {
+                                        type: 'custom',
+                                        icon: <IoArchiveOutline  />,
+                                        disabled: !canArchive,
+                                        tooltip: 'Archive pick list',
+                                        onAction: () => {
+                                            if (!pickList.id) return;
+                                            handleArchivePickList(pickList.id);
+                                        },
+                                        confirmTitle: 'Are you sure you want to archive:'
                                     },
                                     {
                                         type: 'edit',
-                                        disabled: isPulled,
+                                        disabled: !canEdit,
+                                        tooltip: 'Edit pick list',
                                         onEdit: () => props.handleEdit(pickList.id)
                                     },
                                     {
                                         type: 'delete',
+                                        disabled: !canDelete,
                                         onDelete: () => {
                                             if (!pickList.id) return;
                                             handleDelete(pickList.id);

@@ -105,6 +105,11 @@ import { useAppDispatch } from "@/store/hooks"
 
 ## Important Notes
 
+- **HMR is unreliable**: Hot Module Replacement does not work correctly in this project. When making frontend changes:
+  1. Delete any stale `.js` files in `src/` (run `find src -name "*.js" -type f -delete`)
+  2. Clear Vite cache (`rm -rf node_modules/.vite`)
+  3. Kill and restart the dev server (`npm run dev`)
+
 - **Dev server configuration**: Vite dev server runs on `0.0.0.0:5173` with polling enabled for Docker/WSL compatibility. HMR uses WebSocket on `localhost:5173`.
 
 - **Type safety**: The project uses TypeScript strict mode. All Redux state and props should be properly typed.

@@ -9,6 +9,7 @@ type SortableTableHeadCellProps<T> = {
     onSort: (key: keyof T) => void;
     children: React.ReactNode;
     className?: string;
+    centered?: boolean;
 };
 
 export function SortableTableHeadCell<T>({
@@ -17,6 +18,7 @@ export function SortableTableHeadCell<T>({
     onSort,
     children,
     className = '',
+    centered = false,
 }: SortableTableHeadCellProps<T>) {
     const isSorted = sortConfig.key === columnKey;
 
@@ -25,7 +27,7 @@ export function SortableTableHeadCell<T>({
             className={`cursor-pointer select-none hover:bg-gray-700 ${className}`}
             onClick={() => onSort(columnKey)}
         >
-            <div className="flex items-center gap-1">
+            <div className={`flex items-center gap-1 ${centered ? 'justify-center' : ''}`}>
                 {children}
                 {isSorted && (
                     sortConfig.order === 'asc'

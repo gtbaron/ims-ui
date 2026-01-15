@@ -2,8 +2,8 @@ import {api} from "@/services/ImsClient"
 import {PickList} from "@/components/pickLists/PickList";
 import {ApiResponse} from "@/services/ApiResponse";
 
-export const callGetPickLists = async (): Promise<PickList[]> => {
-    const response = await api.get<ApiResponse<PickList[]>>('/pick-lists');
+export const callGetPickLists = async (includeArchived: boolean = false): Promise<PickList[]> => {
+    const response = await api.get<ApiResponse<PickList[]>>(`/pick-lists?includeArchived=${includeArchived}`);
     return response.data.data;
 }
 
@@ -29,5 +29,20 @@ export const callPullPickList = async (id: number): Promise<PickList> => {
 
 export const callReturnPickList = async (id: number): Promise<PickList> => {
     const response = await api.post(`/pick-lists/${id}/return`);
+    return response.data.data[0];
+}
+
+export const callCompletePickList = async (id: number): Promise<PickList> => {
+    const response = await api.post(`/pick-lists/${id}/complete`);
+    return response.data.data[0];
+}
+
+export const callCancelPickList = async (id: number): Promise<PickList> => {
+    const response = await api.post(`/pick-lists/${id}/cancel`);
+    return response.data.data[0];
+}
+
+export const callArchivePickList = async (id: number): Promise<PickList> => {
+    const response = await api.post(`/pick-lists/${id}/archive`);
     return response.data.data[0];
 }

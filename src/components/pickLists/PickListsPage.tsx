@@ -1,11 +1,11 @@
 import React, {useState} from "react";
-import {Button} from "flowbite-react";
+import {Button, Checkbox, Label} from "flowbite-react";
 import {PickListsList} from "@/components/pickLists/PickListsList";
 import {AddUpdatePickListModal} from "@/components/modals/AddUpdatePickListModal";
 import {PickList, PickListStatus} from "@/components/pickLists/PickList";
 import {callCreatePickList, callUpdatePickList} from "@/services/PickListService";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
-import {addPickList, updatePickList} from "@/store/slices/PickListSlice";
+import {addPickList, updatePickList, fetchPickLists} from "@/store/slices/PickListSlice";
 
 const defaultPickList: PickList = {
     id: undefined,
@@ -19,7 +19,13 @@ export const PickListsPage: React.FC = () => {
     const pickLists: PickList[] = useAppSelector((state) => state.pickLists.list);
     const [showAddUpdatePickListModal, setShowAddUpdatePickListModal] = useState(false);
     const [modalPickList, setModalPickList] = useState<PickList>(defaultPickList);
+    const [showArchived, setShowArchived] = useState(false);
     const dispatch = useAppDispatch();
+
+    const handleShowArchivedChange = (checked: boolean) => {
+        setShowArchived(checked);
+        dispatch(fetchPickLists(checked));
+    };
 
     const handleEdit = (pickListId: number | undefined) => {
         if (!pickListId) return;
@@ -52,7 +58,17 @@ export const PickListsPage: React.FC = () => {
         <div>
             <div className="flex justify-between mb-3">
                 <h1 className='text-white'>Pick Lists</h1>
-                <Button color={'gray'} size={'sm'} onClick={handleAdd}>Add Pick List</Button>
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <Checkbox
+                            id="showArchived"
+                            checked={showArchived}
+                            onChange={(e) => handleShowArchivedChange(e.target.checked)}
+                        />
+                        <Label htmlFor="showArchived" className="text-white">Show Archived</Label>
+                    </div>
+                    <Button color={'gray'} size={'sm'} onClick={handleAdd}>Add Pick List</Button>
+                </div>
             </div>
             <PickListsList handleEdit={handleEdit} />
             {showAddUpdatePickListModal && <AddUpdatePickListModal
