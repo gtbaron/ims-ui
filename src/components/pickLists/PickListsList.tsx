@@ -1,7 +1,7 @@
 import React, {useMemo, useState} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow, Tooltip} from "flowbite-react";
 import {IoClipboardOutline, IoCheckmarkCircleOutline, IoCloseCircleOutline, IoArchiveOutline, IoArrowUndoOutline} from "react-icons/io5";
-import {ActionsTableCell} from "@/components/wrappers/ActionsTableCell";
+import {ActionsTableCell, Action} from "@/components/wrappers/ActionsTableCell";
 import {SortableTableHeadCell} from "@/components/wrappers/SortableTableHeadCell";
 import {useAppDispatch, useAppSelector} from "@/store/hooks";
 import {PickList, PickListStatus} from "@/components/pickLists/PickList";
@@ -116,7 +116,7 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                         <SortableTableHeadCell columnKey="pickListStatus" sortConfig={sortConfig} onSort={handleSort}>
                             Status
                         </SortableTableHeadCell>
-                        <TableHeadCell className="text-center">Actions</TableHeadCell>
+                        <TableHeadCell>Actions</TableHeadCell>
                     </TableRow>
                 </TableHead>
                 <TableBody className="divide-y">
@@ -171,81 +171,105 @@ export const PickListsList: React.FC<PickListsListProps> = (props: PickListsList
                                     pickList.pickListStatus
                                 )}
                             </TableCell>
-                            <ActionsTableCell
-                                displayName={displayName}
-                                actions={[
-                                    {
-                                        type: 'custom',
-                                        icon: <IoClipboardOutline  />,
-                                        disabled: !canPull,
-                                        tooltip: 'Pull parts from inventory',
-                                        onAction: () => {
-                                            if (!pickList.id) return;
-                                            handlePullPickList(pickList.id);
-                                        },
-                                        confirmTitle: 'Are you sure you want to pull parts for:'
+                            {(() => {
+                            const actions: Action[] = [];
+
+                            // Pull - only for READY_TO_PICK
+                            if (canPull) {
+                                actions.push({
+                                    type: 'custom',
+                                    icon: <IoClipboardOutline />,
+                                    tooltip: 'Pull parts from inventory',
+                                    onAction: () => {
+                                        if (!pickList.id) return;
+                                        handlePullPickList(pickList.id);
                                     },
-                                    {
-                                        type: 'custom',
-                                        icon: <IoArrowUndoOutline  />,
-                                        disabled: !canReturn,
-                                        tooltip: 'Return parts to inventory',
-                                        onAction: () => {
-                                            if (!pickList.id) return;
-                                            handleReturnPickList(pickList.id);
-                                        },
-                                        confirmTitle: 'Are you sure you want to return parts for:'
+                                    confirmTitle: 'Are you sure you want to pull parts for:'
+                                });
+                            }
+
+                            // Return - only for IN_BUILD
+                            if (canReturn) {
+                                actions.push({
+                                    type: 'custom',
+                                    icon: <IoArrowUndoOutline />,
+                                    tooltip: 'Return parts to inventory',
+                                    onAction: () => {
+                                        if (!pickList.id) return;
+                                        handleReturnPickList(pickList.id);
                                     },
-                                    {
-                                        type: 'custom',
-                                        icon: <IoCheckmarkCircleOutline  />,
-                                        disabled: !canComplete,
-                                        tooltip: 'Mark build as complete',
-                                        onAction: () => {
-                                            if (!pickList.id) return;
-                                            handleCompletePickList(pickList.id);
-                                        },
-                                        confirmTitle: 'Are you sure you want to complete:'
+                                    confirmTitle: 'Are you sure you want to return parts for:'
+                                });
+                            }
+
+                            // Complete - only for IN_BUILD
+                            if (canComplete) {
+                                actions.push({
+                                    type: 'custom',
+                                    icon: <IoCheckmarkCircleOutline />,
+                                    tooltip: 'Mark build as complete',
+                                    onAction: () => {
+                                        if (!pickList.id) return;
+                                        handleCompletePickList(pickList.id);
                                     },
-                                    {
-                                        type: 'custom',
-                                        icon: <IoCloseCircleOutline  />,
-                                        disabled: !canCancel,
-                                        tooltip: 'Cancel pick list',
-                                        onAction: () => {
-                                            if (!pickList.id) return;
-                                            handleCancelPickList(pickList.id);
-                                        },
-                                        confirmTitle: 'Are you sure you want to cancel:'
+                                    confirmTitle: 'Are you sure you want to complete:'
+                                });
+                            }
+
+                            // Cancel - for DRAFT, INSUFFICIENT_PARTS, READY_TO_PICK, IN_BUILD
+                            if (canCancel) {
+                                actions.push({
+                                    type: 'custom',
+                                    icon: <IoCloseCircleOutline />,
+                                    tooltip: 'Cancel pick list',
+                                    onAction: () => {
+                                        if (!pickList.id) return;
+                                        handleCancelPickList(pickList.id);
                                     },
-                                    {
-                                        type: 'custom',
-                                        icon: <IoArchiveOutline  />,
-                                        disabled: !canArchive,
-                                        tooltip: 'Archive pick list',
-                                        onAction: () => {
-                                            if (!pickList.id) return;
-                                            handleArchivePickList(pickList.id);
-                                        },
-                                        confirmTitle: 'Are you sure you want to archive:'
+                                    confirmTitle: 'Are you sure you want to cancel:'
+                                });
+                            }
+
+                            // Archive - only for COMPLETED, CANCELLED
+                            if (canArchive) {
+                                actions.push({
+                                    type: 'custom',
+                                    icon: <IoArchiveOutline />,
+                                    tooltip: 'Archive pick list',
+                                    onAction: () => {
+                                        if (!pickList.id) return;
+                                        handleArchivePickList(pickList.id);
                                     },
-                                    {
-                                        type: 'edit',
-                                        disabled: !canEdit,
-                                        tooltip: 'Edit pick list',
-                                        onEdit: () => props.handleEdit(pickList.id)
-                                    },
-                                    {
-                                        type: 'delete',
-                                        disabled: !canDelete,
-                                        tooltip: 'Delete pick list',
-                                        onDelete: () => {
-                                            if (!pickList.id) return;
-                                            handleDelete(pickList.id);
-                                        }
+                                    confirmTitle: 'Are you sure you want to archive:'
+                                });
+                            }
+
+                            // Edit - for DRAFT, INSUFFICIENT_PARTS, READY_TO_PICK
+                            if (canEdit) {
+                                actions.push({
+                                    type: 'edit',
+                                    tooltip: 'Edit pick list',
+                                    onEdit: () => props.handleEdit(pickList.id)
+                                });
+                            }
+
+                            // Delete - for DRAFT, INSUFFICIENT_PARTS, READY_TO_PICK
+                            if (canDelete) {
+                                actions.push({
+                                    type: 'delete',
+                                    tooltip: 'Delete pick list',
+                                    onDelete: () => {
+                                        if (!pickList.id) return;
+                                        handleDelete(pickList.id);
                                     }
-                                ]}
-                            />
+                                });
+                            }
+
+                            return <ActionsTableCell
+                                displayName={displayName}
+                                actions={actions}
+                            />;
+                        })()}
                         </TableRow>
                     })}
                     <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800">
