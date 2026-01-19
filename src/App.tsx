@@ -32,6 +32,9 @@ export default function App() {
                         <Sidebar>
                             <SidebarItems>
                                 <SidebarItemGroup>
+                                    <SidebarItem href='/listings' icon={IoStorefront}>
+                                        Listings
+                                    </SidebarItem>
                                     <SidebarItem href="/items" icon={HiShoppingBag}>
                                         Items
                                     </SidebarItem>
@@ -40,9 +43,6 @@ export default function App() {
                                     </SidebarItem>
                                     <SidebarItem href='/pick-lists' icon={HiClipboardList}>
                                         Pick Lists
-                                    </SidebarItem>
-                                    <SidebarItem href='/listings' icon={IoStorefront}>
-                                        Listings
                                     </SidebarItem>
                                 </SidebarItemGroup>
                             </SidebarItems>
